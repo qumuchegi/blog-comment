@@ -9,7 +9,6 @@ import catchError from './utils/wrapper/catchError'
 
 async function sendComment(req: NextApiRequest, res: NextApiResponse) {
   const {
-    dbUrlToken,
     clusterId,
     replyTo,
     content,
@@ -21,9 +20,9 @@ async function sendComment(req: NextApiRequest, res: NextApiResponse) {
       url
     }
   } = req.body
-  const accountModel = retrieveAccountModel()
-  const commentModel = retrieveCommentModel()
-  const clusterModel = retrieveClusterModel()
+  const accountModel = await retrieveAccountModel()
+  const commentModel = await retrieveCommentModel()
+  const clusterModel = await retrieveClusterModel()
   let commenterAccountDocument = await accountModel.findOne({id: accountId}).exec()
   if(!commenterAccountDocument) {
     commenterAccountDocument = await accountModel.create({

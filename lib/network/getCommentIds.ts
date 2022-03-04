@@ -1,7 +1,6 @@
 import Http, { BaseRes } from './http'
 
 type Params = {
-  dbUrlToken: string,
   clusterId: string,
   offset: number,
   limit: number

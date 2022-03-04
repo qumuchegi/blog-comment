@@ -11,7 +11,7 @@ const Http = {
     //+ '?' + Object.entries(params).map(([k ,v]) => `${k}=${v}`).join('&')
     console.log({path})
     const res = await axios({
-      url: 'http://localhost:3004/' + path,
+      url: 'http://localhost:3001/' + path,
       method: 'GET',
       params
     }

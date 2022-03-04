@@ -5,22 +5,19 @@ import CommentItem from './CommentItem.server'
 
 const LIMIT = 10
 function CommentList1({
-  dbUrlToken,
   clusterId,
   offset = 0
 }: {
-  dbUrlToken: string,
   clusterId: string,
   offset?: number
 }) {
   const commentIds: [] | CommentIds['ids'] = useData(
-    dbUrlToken + clusterId + offset,
+    clusterId + offset,
     async () => {
       console.log('wefere');
       try {
         const data = await getCommentIds(
           {
-           dbUrlToken,
            clusterId,
            offset,
            limit: LIMIT
@@ -40,7 +37,6 @@ function CommentList1({
       commentIds.length > 0 &&
       commentIds.map((id) => <div key={id}>
         <CommentItem
-          dbUrlToken={dbUrlToken}
           id={id}
         />
       </div>)
@@ -50,18 +46,15 @@ function CommentList1({
 
 export default function CommentList(
   {
-    dbUrlToken,
     clusterId,
     offset = 0
   }: {
-    dbUrlToken: string,
     clusterId: string,
     offset?: number
   }
 ) {
   return <Suspense fallback={<div>loading</div>}>
     <CommentList1
-      dbUrlToken={dbUrlToken}
       clusterId={clusterId}
       offset={offset}
     />

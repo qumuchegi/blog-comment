@@ -10,10 +10,24 @@ const createConnect = async (mongodbUrl: string) => {
   return mongoose.connect(mongodbUrl)
 }
 
+const dbUrl = process.env.mongodbUrl as string
+
+async function initDb(mongodbUrl: string) {
+  console.log({mongodbUrl})
+  const connect = await createConnect(mongodbUrl)
+  console.log({connect})
+  await createAccountModel()
+  await createCommentModel()
+  await createCommentClusterModel()
+  console.log('数据库初始化完毕')
+  return true
+}
+
 const createModel = <T>(modelName: SchemaNames, schema: mongoose.Schema) => {
   mongoose.model<T>(modelName, schema)
 }
-const retrieveModel = <T>(modelName: SchemaNames): mongoose.Model<T> => {
+const retrieveModel = async <T>(modelName: SchemaNames): mongoose.Model<T> => {
+  await initDb(dbUrl)
   return mongoose.model<T>(modelName)
 }
 
@@ -49,20 +63,6 @@ const createCommentClusterModel = () => {
     new mongoose.Schema(CommentClusterSchema.schema)
   )
 }
-
-async function initDb(mongodbUrl: string) {
-  console.log({mongodbUrl})
-  const connect = await createConnect(mongodbUrl)
-  console.log({connect})
-  await createAccountModel()
-  await createCommentModel()
-  await createCommentClusterModel()
-  console.log('数据库初始化完毕')
-  return true
-}
-
-const dbUrl = process.env.mongodbUrl as string
-initDb(dbUrl)
 
 export {
   retrieveAccountModel,

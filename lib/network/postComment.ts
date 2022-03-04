@@ -1,7 +1,6 @@
 import Http, { BaseRes } from './http'
 
 export type Params = {
-  dbUrlToken: string,
   clusterId: string,
   content: string,
   commenter: {

@@ -3,7 +3,6 @@ import styled from 'styled-components'
 import postComment from '../lib/network/postComment'
 
 interface Props {
-  dbUrlToken: string
   articleId: string
   inputStyle?: React.StyleHTMLAttributes<'input'>
   onSuccess?: () => void,
@@ -11,7 +10,6 @@ interface Props {
 
 }
 export default function CommentSendInput({
-  dbUrlToken,
   articleId,
   inputStyle = {},
   onSuccess,
@@ -25,7 +23,6 @@ export default function CommentSendInput({
     if (!articleId) return
     try {
       const res = await postComment({
-        dbUrlToken,
         clusterId: articleId,
         content: value,
         // TODO: 暂时用匿名账号发送评论
@@ -40,7 +37,7 @@ export default function CommentSendInput({
     } catch (err) {
       onFailed?.()
     }
-  }, [articleId, dbUrlToken, onFailed, onSuccess, value])
+  }, [articleId, onFailed, onSuccess, value])
   return <div>
     <div>
       <CommentInput

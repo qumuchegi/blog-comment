@@ -10,8 +10,8 @@ async function retrieveCommentsByCommentIds(req: NextApiRequest, res: NextApiRes
   const {
     commentIds = []
   } = req.query
-  const accountModel = retrieveAccountModel()
-  const commentModel = retrieveCommentModel()
+  const accountModel = await retrieveAccountModel()
+  const commentModel = await retrieveCommentModel()
   const rawComments = await commentModel.find({
     _id: commentIds
   })

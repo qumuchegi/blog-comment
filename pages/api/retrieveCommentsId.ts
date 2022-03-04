@@ -14,7 +14,7 @@ async function retrieveCommentsId(req: NextApiRequest, res: NextApiResponse) {
     limit = 10
   } = req.query
   console.log(req.query)
-  const clusterModel = retrieveClusterModel()
+  const clusterModel = await retrieveClusterModel()
   const clusterDocument = await clusterModel.findOne({
     _id: clusterId
   })

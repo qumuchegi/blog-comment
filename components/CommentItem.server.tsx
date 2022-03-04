@@ -7,17 +7,14 @@ import Avatar from './avatar'
  * 不要用 useState、useEffect、等
  */
 export default function CommentItem({
-  dbUrlToken,
   id
 }: {
-  dbUrlToken: string,
   id: string
 }) {
   const commentInfo: CommentInfo | null = useData(id, async () => {
     try {
       const data = await getCommentInfoById(
         {
-         dbUrlToken,
          id
        }
       )
