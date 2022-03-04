@@ -1,9 +1,11 @@
+import mongoose from 'mongoose'
 import { NextApiRequest, NextApiResponse } from 'next'
 import {
   retrieveAccountModel,
   retrieveCommentModel
 } from '../../lib/database/index'
 import { verifyJWTToken } from '../../lib/jwt/index'
+import { sortObjArr } from '../../lib/utils/array'
 import catchError from './utils/wrapper/catchError'
 
 // post
@@ -13,11 +15,18 @@ async function retrieveCommentsByCommentIds(req: NextApiRequest, res: NextApiRes
   } = req.body
   const accountModel = await retrieveAccountModel()
   const commentModel = await retrieveCommentModel()
-  const rawComments = await commentModel.find({
+  const rawComments = (await commentModel.find({
     _id: commentIds
+  })).map(item => ({
+    ...item.toObject(),
+    ['orderHelperKey']: (item._id).toString()
+  }))
+  const rawCommentsOrdered = sortObjArr( rawComments, {
+    sortField: 'orderHelperKey',
+    order: commentIds
   })
   const comments = await Promise.all(
-    rawComments.map(async item => {
+    rawCommentsOrdered.map(async item => {
       const commenter = await accountModel.findOne({
         _id: item.commenterId
       })

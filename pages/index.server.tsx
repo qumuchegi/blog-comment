@@ -7,14 +7,27 @@ import CommentList from '../components/CommentList.server'
 import React, { Suspense } from 'react'
 
 const Home: NextPage = () => {
-  return (<div>
-    <CommentSendInput
-      articleId="4edd40c86762e0fb12000003"
-    /> 
-    <CommentList
-      clusterId="4edd40c86762e0fb12000003"
-      offset={1}
-    />
+  return (<div style={{
+    flex: '1'
+  }}>
+    <div style={{
+      position: 'sticky',
+      backgroundColor: '#fff',
+      padding: '10px',
+      top: '0'
+    }}>
+      <CommentSendInput
+        articleId="4edd40c86762e0fb12000003"
+      /> 
+    </div>
+    <div style={{
+      padding: '10px'
+    }}>
+      <CommentList
+        clusterId="4edd40c86762e0fb12000003"
+        offset={1}
+      />
+    </div>
   </div>)
 }
 

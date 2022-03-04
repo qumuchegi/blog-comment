@@ -19,7 +19,7 @@ function CommentList1({
         {
          clusterId,
          offset,
-         limit: LIMIT
+        //  limit: LIMIT
        }
       )
       return data?.ids
@@ -43,13 +43,14 @@ function CommentList1({
       return []
     }
   })
-  console.log({commentInfos});
+  // console.log({commentInfos});
   return <div>
     {
       commentInfos?.length > 0 &&
       commentInfos.map((info) => <div key={info.id}>
         <CommentItem
           commentInfo={info}
+          articleId={clusterId}
         />
       </div>)
     }

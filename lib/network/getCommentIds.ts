@@ -3,7 +3,7 @@ import Http, { BaseRes } from './http'
 type Params = {
   clusterId: string,
   offset: number,
-  limit: number
+  limit?: number
 }
 export interface ResData {
   ids: string[]

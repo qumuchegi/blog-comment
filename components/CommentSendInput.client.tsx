@@ -1,19 +1,25 @@
 import React, { useCallback, useState } from 'react'
-import styled from 'styled-components'
 import postComment from '../lib/network/postComment'
+import postReply, { Params as PostReplyParams } from '../lib/network/postReply'
 
 interface Props {
   articleId: string
-  inputStyle?: React.StyleHTMLAttributes<'input'>
+  inputStyle?: React.StyleHTMLAttributes<'html'>
   onSuccess?: () => void,
   onFailed?: () => void
-
+  replyTo?: {
+    toAccountId: string,
+    toAccountAvatar: string,
+    toAccountName: string,
+    toCommentId: string
+  }
 }
 export default function CommentSendInput({
   articleId,
   inputStyle = {},
   onSuccess,
-  onFailed
+  onFailed,
+  replyTo
 }: Props) {
   const [value, setValue] = useState('')
   const onInputChange: React.ChangeEventHandler<HTMLInputElement> = useCallback((e) => {
@@ -21,28 +27,48 @@ export default function CommentSendInput({
   }, [])
   const _onSend = useCallback(async () => {
     if (!articleId) return
-    try {
-      const res = await postComment({
-        clusterId: articleId,
-        content: value,
-        // TODO: 暂时用匿名账号发送评论
-        commenter: {
-          userName: 'Anonymous',
-          avatar: '',
-          email: '',
-          url: ''
+    let params = {
+      clusterId: articleId,
+      content: value,
+      // TODO: 暂时用匿名账号发送评论
+      commenter: {
+        userName: 'Anonymous',
+        avatar: '',
+        email: '',
+        url: ''
+      }
+    }
+    let request
+    if (replyTo) {
+      params = {
+        ...params,
+        replyTo: {
+          replyToCommentId: replyTo.toCommentId,
+          replyToAccountId: replyTo.toAccountId
         }
-      })
+      } as PostReplyParams
+      request = postReply
+    } else {
+      request = postComment
+    }
+    try {
+      //@ts-ignore
+      const res = await request(params)
       onSuccess?.()
     } catch (err) {
       onFailed?.()
     }
-  }, [articleId, onFailed, onSuccess, value])
+  }, [articleId, onFailed, onSuccess, replyTo, value])
   return <div>
     <div>
-      <CommentInput
-        inputStyle={inputStyle}
+      <input
+        style={{
+          flex: '1',
+          color: 'black',
+          padding: '10px'
+        }}
         type='text'
+        placeholder={replyTo ? `回复 ${replyTo.toAccountName}` : '评论～'}
         onChange={onInputChange}
       />
     </div>
@@ -51,13 +77,3 @@ export default function CommentSendInput({
     </div>
   </div>
 }
-
-interface InputProps {
-  inputStyle: React.StyleHTMLAttributes<'input'>
-}
-const CommentInput = styled.input<InputProps>`
-  ${
-    props => Object.entries(props.inputStyle ?? {}).map(([k, v]) => `${k}: ${v};`)
-  }
-
-`

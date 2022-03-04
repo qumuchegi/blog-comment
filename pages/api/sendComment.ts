@@ -43,6 +43,13 @@ async function sendComment(req: NextApiRequest, res: NextApiResponse) {
       reply: [],
       replyTo
     })
+    await commentModel.updateOne({
+      _id: replyTo.replyToCommentId
+    }, {
+      $push: {
+        reply: commentDocument._id
+      }
+    })
   } else {
     commentDocument = await commentModel.create({
       content,
