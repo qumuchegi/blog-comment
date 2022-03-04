@@ -30,7 +30,6 @@ export default function CommentSendInput({
         content: value,
         // TODO: 暂时用匿名账号发送评论
         commenter: {
-          id: '123456',
           userName: 'Anonymous',
           avatar: '',
           email: '',

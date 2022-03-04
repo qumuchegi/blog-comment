@@ -9,7 +9,7 @@ export interface Account {
   avatar?: string
 }
 const accountSchema = {
-  _id: mongoose.Types.ObjectId,
+  // _id: mongoose.Schema.Types.ObjectId,
   userName: { type: String, required: true },
   email: String,
   url: String,

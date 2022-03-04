@@ -1,20 +1,22 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { initDb } from '../lib/database/index'
-import { verifyJWTToken } from '../lib/jwt/index'
-import catchError from '../api/utils/wrapper/catchError'
+import {
+  retrieveAccountModel,
+  retrieveCommentModel,
+  retrieveClusterModel
+} from '../../lib/database/index'
+import { SchemaNames } from '../../lib/database/schema'
+import { verifyJWTToken } from '../../lib/jwt/index'
+import catchError from './utils/wrapper/catchError'
 
 async function retrieveCommentsByClusterId(req: NextApiRequest, res: NextApiResponse) {
   const {
-    dbUrlToken,
     clusterId,
     offset = 0,
     limit = 10
-  } = req.body
-  const dbUrl = verifyJWTToken(dbUrlToken).dbUrl
-  const models =  await initDb(dbUrl)
-  const accountModel = models['AccountSchema']
-  const commentModel = models['CommentSchema']
-  const clusterModel = models['CommentClusterSchema']
+  } = req.query
+  const accountModel = retrieveAccountModel()
+  const commentModel = retrieveCommentModel()
+  const clusterModel = retrieveClusterModel()
   const clusterDocument = await clusterModel.findOne({
     _id: clusterId
   })
@@ -26,6 +28,7 @@ async function retrieveCommentsByClusterId(req: NextApiRequest, res: NextApiResp
     })
   }
   const allCommentsId = clusterDocument.comments.filter(i => i.isTopComment).map(i => i.id)
+  //@ts-ignore
   const ids = allCommentsId.slice(offset, limit + offset)
   const rawComments = await commentModel.find({
     _id: ids

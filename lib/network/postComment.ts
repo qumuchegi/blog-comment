@@ -5,7 +5,7 @@ export type Params = {
   clusterId: string,
   content: string,
   commenter: {
-    id: string,
+    id?: string, // 没有 id 就是匿名
     userName: string,
     avatar: string,
     email: string,

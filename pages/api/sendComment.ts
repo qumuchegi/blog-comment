@@ -1,7 +1,11 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { initDb } from '../lib/database/index'
-import { verifyJWTToken } from '../lib/jwt/index'
-import catchError from '../api/utils/wrapper/catchError'
+import {
+  retrieveAccountModel,
+  retrieveCommentModel,
+  retrieveClusterModel
+} from '../../lib/database/index'
+import { verifyJWTToken, signJWTToken } from '../../lib/jwt/index'
+import catchError from './utils/wrapper/catchError'
 
 async function sendComment(req: NextApiRequest, res: NextApiResponse) {
   const {
@@ -17,11 +21,9 @@ async function sendComment(req: NextApiRequest, res: NextApiResponse) {
       url
     }
   } = req.body
-  const dbUrl = verifyJWTToken(dbUrlToken).dbUrl
-  const models =  await initDb(dbUrl)
-  const accountModel = models['AccountSchema']
-  const commentModel = models['CommentSchema']
-  const clusterModel = models['CommentClusterSchema']
+  const accountModel = retrieveAccountModel()
+  const commentModel = retrieveCommentModel()
+  const clusterModel = retrieveClusterModel()
   let commenterAccountDocument = await accountModel.findOne({id: accountId}).exec()
   if(!commenterAccountDocument) {
     commenterAccountDocument = await accountModel.create({
@@ -53,7 +55,7 @@ async function sendComment(req: NextApiRequest, res: NextApiResponse) {
   }
   const commentId = commentDocument._id
   let clusterDocument = await clusterModel.findOne({
-    _id: clusterId
+    id: clusterId
   })
   if(!clusterDocument) {
     clusterDocument = await clusterModel.create(
@@ -64,7 +66,7 @@ async function sendComment(req: NextApiRequest, res: NextApiResponse) {
   } else {
     await clusterModel.updateOne(
       {
-        _id: clusterId
+        id: clusterId
       },
       {
         comments: [...clusterDocument.get('comments'), {id: commentId, isTopComment: !replyTo}]

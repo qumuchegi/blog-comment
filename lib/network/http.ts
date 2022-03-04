@@ -2,23 +2,25 @@ import axios from 'axios'
 
 const Http = {
   _get: async function<
-    ReqData,
+    ReqData extends Object,
     ResData
   >(
     path: string,
     params?: ReqData
   ): Promise<ResData> {
+    //+ '?' + Object.entries(params).map(([k ,v]) => `${k}=${v}`).join('&')
+    console.log({path})
     const res = await axios({
+      url: 'http://localhost:3004/' + path,
       method: 'GET',
-      url: path,
-      data: {
-        ...params
-      }
-    })
+      params
+    }
+    )
+    console.log({res})
     if (res.data.code !== 0) {
       throw null
     }
-    return res.data
+    return res.data.data
   },
   _post: async function<
       ReqData,
@@ -39,7 +41,7 @@ const Http = {
     if (res.data.code !== 0) {
       throw null
     }
-    return res.data
+    return res.data.data
   }
 }
 

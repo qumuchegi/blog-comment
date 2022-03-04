@@ -11,7 +11,7 @@ export interface Comment {
   reply: Array<string> // comment id array
 }
 const commentSchema = {
-  _id: mongoose.Types.ObjectId,
+  // _id: mongoose.Schema.Types.ObjectId,
   commenterId: mongoose.Types.ObjectId,
   content: String,
   createTime: Number,

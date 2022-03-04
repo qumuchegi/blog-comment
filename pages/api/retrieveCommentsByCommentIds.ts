@@ -1,17 +1,17 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { initDb } from '../lib/database/index'
-import { verifyJWTToken } from '../lib/jwt/index'
-import catchError from '../api/utils/wrapper/catchError'
+import {
+  retrieveAccountModel,
+  retrieveCommentModel
+} from '../../lib/database/index'
+import { verifyJWTToken } from '../../lib/jwt/index'
+import catchError from './utils/wrapper/catchError'
 
 async function retrieveCommentsByCommentIds(req: NextApiRequest, res: NextApiResponse) {
   const {
-    dbUrlToken,
     commentIds = []
-  } = req.body
-  const dbUrl = verifyJWTToken(dbUrlToken).dbUrl
-  const models =  await initDb(dbUrl)
-  const accountModel = models['AccountSchema']
-  const commentModel = models['CommentSchema']
+  } = req.query
+  const accountModel = retrieveAccountModel()
+  const commentModel = retrieveCommentModel()
   const rawComments = await commentModel.find({
     _id: commentIds
   })

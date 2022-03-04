@@ -6,49 +6,66 @@ import {
   SchemaNames
 } from './schema'
 
-const createConnect = (mongodbUrl: string) => {
-  const connectPromise = mongoose.connect(mongodbUrl)
-  return connectPromise
+const createConnect = async (mongodbUrl: string) => {
+  return mongoose.connect(mongodbUrl)
 }
 
-const retrieveModel = <T>(modelName: SchemaNames, schema: mongoose.Schema): mongoose.Model<T> => {
-  return mongoose.model(modelName, schema)
+const createModel = <T>(modelName: SchemaNames, schema: mongoose.Schema) => {
+  mongoose.model<T>(modelName, schema)
+}
+const retrieveModel = <T>(modelName: SchemaNames): mongoose.Model<T> => {
+  return mongoose.model<T>(modelName)
 }
 
 const retrieveAccountModel = () => {
-  return retrieveModel<Account>(
+  return retrieveModel<Account>(SchemaNames.account)
+}
+
+const createAccountModel = () => {
+  return createModel<Account>(
     SchemaNames.account,
-    new mongoose.Schema(AccountSchema)
+    new mongoose.Schema(AccountSchema.schema)
   )
 }
 
 const retrieveCommentModel = () => {
-  return retrieveModel<Comment>(
+  return retrieveModel<Comment>(SchemaNames.comment)
+}
+
+const createCommentModel = () => {
+  return createModel<Comment>(
     SchemaNames.comment,
-    new mongoose.Schema(CommentSchema)
+    new mongoose.Schema(CommentSchema.schema)
   )
 }
 
-const retrieveCommentClusterModel = () => {
-  return retrieveModel<Cluster>(
+const retrieveClusterModel = () => {
+  return retrieveModel<Cluster>(SchemaNames.commentCluster)
+}
+
+const createCommentClusterModel = () => {
+  return createModel<Cluster>(
     SchemaNames.commentCluster,
-    new mongoose.Schema(CommentClusterSchema)
+    new mongoose.Schema(CommentClusterSchema.schema)
   )
 }
 
 async function initDb(mongodbUrl: string) {
-  await createConnect(mongodbUrl)
-  return {
-    [SchemaNames.account]: await retrieveAccountModel(),
-    [SchemaNames.comment]: await retrieveCommentModel(),
-    [SchemaNames.commentCluster]: await retrieveCommentClusterModel(),
-  }
+  console.log({mongodbUrl})
+  const connect = await createConnect(mongodbUrl)
+  console.log({connect})
+  await createAccountModel()
+  await createCommentModel()
+  await createCommentClusterModel()
+  console.log('数据库初始化完毕')
+  return true
 }
+
+const dbUrl = process.env.mongodbUrl as string
+initDb(dbUrl)
 
 export {
-  initDb
+  retrieveAccountModel,
+  retrieveCommentModel,
+  retrieveClusterModel
 }
-
-/**
- * mongodb+srv://chegi_mongodb:113322cg@cluster0.2spu1.mongodb.net/myFirstDatabase?retryWrites=true&w=majority
- */
