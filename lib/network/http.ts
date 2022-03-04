@@ -1,5 +1,6 @@
 import axios from 'axios'
 
+const BASE_URL = process.env.NODE_ENV === 'development' ? 'http://localhost:3001/' : 'https://blog-comment-mocha.vercel.app/'
 const Http = {
   _get: async function<
     ReqData extends Object,
@@ -9,14 +10,12 @@ const Http = {
     params?: ReqData
   ): Promise<ResData> {
     //+ '?' + Object.entries(params).map(([k ,v]) => `${k}=${v}`).join('&')
-    console.log({path})
     const res = await axios({
-      url: 'http://localhost:3001/' + path,
+      url: BASE_URL + path,
       method: 'GET',
       params
     }
     )
-    console.log({res})
     if (res.data.code !== 0) {
       throw null
     }
@@ -32,7 +31,7 @@ const Http = {
     const res = await axios(
       {
         method: 'POST',
-        url: path,
+        url: BASE_URL + path,
         data: {
           ...params
         }

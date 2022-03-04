@@ -11,10 +11,10 @@ const Home: NextPage = () => {
     <CommentSendInput
       articleId="4edd40c86762e0fb12000003"
     /> 
-    {/* <CommentList
+    <CommentList
       clusterId="4edd40c86762e0fb12000003"
       offset={1}
-    /> */}
+    />
   </div>)
 }
 

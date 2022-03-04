@@ -12,5 +12,5 @@ const clusterSchema = {
 }
 export const CommentClusterSchema = {
   name: SchemaNames.commentCluster,
-  schema : new mongoose.Schema(clusterSchema)
+  schema : clusterSchema
 }

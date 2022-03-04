@@ -20,5 +20,5 @@ const commentSchema = {
 }
 export const CommentSchema = {
   name: SchemaNames.comment,
-  schema : new mongoose.Schema(commentSchema)
+  schema : commentSchema
 }

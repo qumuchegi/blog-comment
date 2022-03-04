@@ -1,28 +1,15 @@
-import React from 'react'
-import getCommentInfoById, { ResData as CommentInfo } from '../lib/network/getCommentInfoById'
-import useData from '../lib/cache/useData'
+import React, { Suspense } from 'react'
 import Avatar from './avatar'
-
+import { ResData as CommentInfoRes } from '../lib/network/getCommentInfoById'
 /**
  * 不要用 useState、useEffect、等
  */
 export default function CommentItem({
-  id
+  commentInfo
 }: {
-  id: string
+  commentInfo: CommentInfoRes['comments'][0]
 }) {
-  const commentInfo: CommentInfo | null = useData(id, async () => {
-    try {
-      const data = await getCommentInfoById(
-        {
-         id
-       }
-      )
-      return data
-    } catch (err) {
-      return null
-    }
-  })
+
   const onClickCommenter = () => {
 
   }
@@ -31,7 +18,7 @@ export default function CommentItem({
   }}>
     {
       commentInfo
-      && <div onClick={onClickCommenter}>
+      && <div>
         <div>
           <Avatar avatarUrl={commentInfo?.commenter?.avatar}/>
           <div>{commentInfo?.commenter?.userName}</div>

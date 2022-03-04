@@ -6,36 +6,39 @@ import {
 import { verifyJWTToken } from '../../lib/jwt/index'
 import catchError from './utils/wrapper/catchError'
 
+// post
 async function retrieveCommentsByCommentIds(req: NextApiRequest, res: NextApiResponse) {
   const {
-    commentIds = []
-  } = req.query
+    commentIds
+  } = req.body
   const accountModel = await retrieveAccountModel()
   const commentModel = await retrieveCommentModel()
   const rawComments = await commentModel.find({
     _id: commentIds
   })
-  const comments = rawComments.map(async item => {
-    const commenter = await accountModel.findOne({
-      _id: item.commenterId
-    })
-    const result = {
-      id: item._id,
-      content: item.content,
-      createTime: item.createTime,
-      likeNumber: item.like,
-      isReply: !!item.replyTo,
-      replyNumber: item.reply ? item.reply.length : 0,
-      commenter: {
-        accountId: commenter?._id,
-        userName: commenter?.userName,
-        avatar: commenter?.avatar,
-        url: commenter?.url,
-        email: commenter?.email,
+  const comments = await Promise.all(
+    rawComments.map(async item => {
+      const commenter = await accountModel.findOne({
+        _id: item.commenterId
+      })
+      const result = {
+        id: item._id,
+        content: item.content,
+        createTime: item.createTime,
+        likeNumber: item.like,
+        isReply: !!item.replyTo,
+        replyNumber: item.reply ? item.reply.length : 0,
+        commenter: {
+          accountId: commenter?._id,
+          userName: commenter?.userName,
+          avatar: commenter?.avatar,
+          url: commenter?.url,
+          email: commenter?.email,
+        }
       }
-    }
-    return result
-  })
+      return result
+    })
+  )
   res.status(200).json({
     code: 0,
     msg: 'success',

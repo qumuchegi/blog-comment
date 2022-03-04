@@ -17,5 +17,5 @@ const accountSchema = {
 }
 export const AccountSchema = {
   name: SchemaNames.account,
-  schema : new mongoose.Schema<Account>(accountSchema)
+  schema : accountSchema
 }

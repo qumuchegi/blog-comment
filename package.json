@@ -13,8 +13,7 @@
     "jsonwebtoken": "^8.5.1",
     "next": "^12.1.0",
     "react": "18.0.0-rc.0",
-    "react-dom": "18.0.0-rc.0",
-    "styled-components": "^5.3.3"
+    "react-dom": "18.0.0-rc.0"
   },
   "devDependencies": {
     "@types/jsonwebtoken": "^8.5.8",
