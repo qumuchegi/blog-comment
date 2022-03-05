@@ -50,7 +50,7 @@ export default function CommentItem({
   return <div style={{
     paddingLeft: commentInfo?.isReply ? '30px' : '0px',
     marginBottom: '10px'
-  }}>
+  }} className={styles.body}>
     {
       commentInfo
       && <div>
@@ -73,7 +73,11 @@ export default function CommentItem({
             !hideInteract &&
             <Button
               onClick={isShowReplyInput ? closeReply : onClickReply}
-              text={isShowReplyInput ? '取消回复' : '回复'}
+              text={
+                isShowReplyInput
+                ? '取消回复'
+                : <Image src={'/reply.png'} width={20} height={20} alt='回复'/>
+              }
               width={100}
               height={30}
             />

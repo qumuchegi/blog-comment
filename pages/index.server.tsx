@@ -13,7 +13,7 @@ const Home: NextPage = () => {
       position: 'sticky',
       zIndex: 10,
       backgroundColor: '#fff',
-      padding: '10px',
+      padding: '10px 10px 0 10px',
       top: '0',
       flexGrow: 1
     }}>

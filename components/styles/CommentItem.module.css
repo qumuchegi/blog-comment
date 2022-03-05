@@ -1,3 +1,9 @@
+.body {
+  padding: 10px;
+}
+.body:hover {
+  background-color: rgb(211, 221, 230);
+}
 .header {
   display: flex;
   justify-content: flex-start;
@@ -14,6 +20,7 @@
   display: flex;
   justify-content: flex-start;
   align-items: center;
+  margin-top: 10px;
 }
 .footer>div{
   margin-right: 10px;
@@ -21,6 +28,7 @@
 .footer>.time {
   color: #aaa;
   font-size: 0.7rem;
+  padding-left: 40px;
 }
 .footer>.like{
   display: flex;
