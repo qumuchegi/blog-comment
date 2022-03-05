@@ -8,10 +8,12 @@ import CommentSendInput from './CommentSendInput.client'
  */
 export default function CommentItem({
   articleId,
-  commentInfo
+  commentInfo,
+  topCommentId
 }: {
   articleId: string,
-  commentInfo: CommentInfoRes['comments'][0]
+  commentInfo: CommentInfoRes['comments'][0],
+  topCommentId?: string
 }) {
   const [isShowReplyInput, setIsShowReplyInput] = useState(false)
   const onClickReply = () => {
@@ -29,7 +31,12 @@ export default function CommentItem({
         <div>
           <Avatar avatarUrl={commentInfo?.commenter?.avatar}/>
           <div>{commentInfo?.commenter?.userName}</div>
+          {
+            commentInfo?.replyTo &&
+            <div>回复 {commentInfo?.replyTo?.replyToAccountId?.userName}</div>
+            }
           <div>{commentInfo?.commenter?.email}</div>
+          <div style={{color: '#bbb'}}>{new Date(commentInfo?.createTime).toLocaleString()}</div>
         </div>
         <div>
           <div>{commentInfo?.content}</div>
@@ -46,8 +53,10 @@ export default function CommentItem({
               toAccountId: commentInfo.commenter.accountId,
               toAccountAvatar: commentInfo.commenter.avatar,
               toAccountName: commentInfo.commenter.userName,
-              toCommentId: commentInfo.id
+              toCommentId: commentInfo.id,
+              topCommentId: topCommentId
             }}
+            onSuccess={onSendReplySuccess}
           /> 
         }
       </div>

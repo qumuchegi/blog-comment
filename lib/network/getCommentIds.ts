@@ -6,7 +6,11 @@ type Params = {
   limit?: number
 }
 export interface ResData {
-  ids: string[]
+  ids: {
+    topCommentId: string,
+    repliesId: string[],
+    replyRepliesId: string[]
+  }[]
 }
 export default function getCommentIds(params: Params): Promise<ResData> {
   return Http._get(

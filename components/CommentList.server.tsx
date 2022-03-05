@@ -4,15 +4,15 @@ import useData from '../lib/cache/useData'
 import CommentItem from './CommentItem.client'
 import getCommentInfoById, { ResData as CommentInfoRes } from '../lib/network/getCommentInfoById'
 
-
 const LIMIT = 10
-function CommentList1({
+function CommentListWithData({
   clusterId,
   offset = 0
 }: {
   clusterId: string,
   offset?: number
 }) {
+  // query all comment and reply id
   const fetchComments: () => Promise<[] | CommentIds['ids']> = async () => {
     try {
       const data = await getCommentIds(
@@ -22,27 +22,60 @@ function CommentList1({
         //  limit: LIMIT
        }
       )
-      return data?.ids
+      return data?.ids ?? []
     } catch (err) {
       console.error(err)
       return []
     }
   }
 
-  const commentInfos: CommentInfoRes['comments'] | [] = useData(`CommentItem-${clusterId}-${offset}`, async () => {
+  // mark topCommentId to reply
+  const markTopCommentTopCommentInfos= (
+    commentIds: CommentIds['ids'],
+    commentInfos: CommentInfoRes['comments']
+  ) => {
+    let startIndex = 0
+    let result: (CommentInfoRes['comments'][0] & {topCommentId?: string})[] = []
+    commentIds.forEach(({
+      topCommentId,
+      repliesId,
+      replyRepliesId
+    }) => {
+      const endIndex = 1 + repliesId.length + replyRepliesId.length
+      const topComment = commentInfos[startIndex]
+      result.push(...[
+        topComment,
+        ...commentInfos
+          .slice(startIndex + 1, endIndex + 1)
+          .map(item => ({...item, topCommentId: topComment.id}))
+      ])
+      startIndex += endIndex + 1
+    })
+    return result.filter(i => i)
+  }
+
+  // query comment and reply details by id
+  const commentInfos: (CommentInfoRes['comments'][0] & {topCommentId?: string})[] = useData(`CommentItem-${clusterId}-${offset}`, async () => {
     const commentIds = await fetchComments()
     try {
+      let flatIds: string[] = []
+      commentIds.map(({
+        topCommentId,
+        repliesId,
+        replyRepliesId
+      }) => flatIds.push(...[topCommentId, ...repliesId, ...replyRepliesId]))
       const data = await getCommentInfoById(
         {
-         ids: commentIds
+         ids: flatIds
        }
       )
-      return data.comments
+      return markTopCommentTopCommentInfos(commentIds, data.comments)
     } catch (err) {
       console.error({err});
       return []
     }
   })
+
   // console.log({commentInfos});
   return <div>
     {
@@ -51,6 +84,7 @@ function CommentList1({
         <CommentItem
           commentInfo={info}
           articleId={clusterId}
+          topCommentId={info?.topCommentId}
         />
       </div>)
     }
@@ -67,7 +101,7 @@ export default function CommentList(
   }
 ) {
   return <Suspense fallback={<div>loading</div>}>
-    <CommentList1
+    <CommentListWithData
       clusterId={clusterId}
       offset={offset}
     />

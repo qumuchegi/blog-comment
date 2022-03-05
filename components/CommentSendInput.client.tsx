@@ -11,7 +11,8 @@ interface Props {
     toAccountId: string,
     toAccountAvatar: string,
     toAccountName: string,
-    toCommentId: string
+    toCommentId: string,
+    topCommentId?: string // 回复的回复的时候，带上顶级评论的 ID
   }
 }
 export default function CommentSendInput({
@@ -44,7 +45,8 @@ export default function CommentSendInput({
         ...params,
         replyTo: {
           replyToCommentId: replyTo.toCommentId,
-          replyToAccountId: replyTo.toAccountId
+          replyToAccountId: replyTo.toAccountId,
+          topCommentId: replyTo.topCommentId
         }
       } as PostReplyParams
       request = postReply

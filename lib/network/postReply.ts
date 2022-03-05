@@ -3,6 +3,7 @@ import Http, { BaseRes } from './http'
 export type Params = {
   clusterId: string,
   replyTo: {
+    topCommentId?: string,
     replyToCommentId: string,
     replyToAccountId: string
   },

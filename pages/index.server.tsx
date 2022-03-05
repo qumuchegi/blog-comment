@@ -25,7 +25,7 @@ const Home: NextPage = () => {
     }}>
       <CommentList
         clusterId="4edd40c86762e0fb12000003"
-        offset={1}
+        offset={0}
       />
     </div>
   </div>)

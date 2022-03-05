@@ -4,6 +4,7 @@ import {
   retrieveAccountModel,
   retrieveCommentModel
 } from '../../lib/database/index'
+import { SchemaNames } from '../../lib/database/schema'
 import { verifyJWTToken } from '../../lib/jwt/index'
 import { sortObjArr } from '../../lib/utils/array'
 import catchError from './utils/wrapper/catchError'
@@ -17,7 +18,7 @@ async function retrieveCommentsByCommentIds(req: NextApiRequest, res: NextApiRes
   const commentModel = await retrieveCommentModel()
   const rawComments = (await commentModel.find({
     _id: commentIds
-  })).map(item => ({
+  }).populate('replyTo.replyToCommentId').populate('replyTo.replyToAccountId')).map(item => ({
     ...item.toObject(),
     ['orderHelperKey']: (item._id).toString()
   }))
@@ -36,7 +37,8 @@ async function retrieveCommentsByCommentIds(req: NextApiRequest, res: NextApiRes
         createTime: item.createTime,
         likeNumber: item.like,
         isReply: !!item.replyTo,
-        replyNumber: item.reply ? item.reply.length : 0,
+        replyTo: item.replyTo,
+        replyNumber: item.reply ? (item.reply.length + item.replyReply?.length ?? 0) : 0,
         commenter: {
           accountId: commenter?._id,
           userName: commenter?.userName,
@@ -48,6 +50,9 @@ async function retrieveCommentsByCommentIds(req: NextApiRequest, res: NextApiRes
       return result
     })
   )
+  // console.log({
+  //   comments: JSON.stringify(comments)
+  // })
   res.status(200).json({
     code: 0,
     msg: 'success',

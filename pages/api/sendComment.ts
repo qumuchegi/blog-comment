@@ -41,7 +41,11 @@ async function sendComment(req: NextApiRequest, res: NextApiResponse) {
       createTime: new Date().getTime(),
       like: 0,
       reply: [],
-      replyTo
+      replyReply: [],
+      replyTo: {
+        replyToCommentId: replyTo.replyToCommentId,
+        replyToAccountId: replyTo.replyToAccountId
+      }
     })
     await commentModel.updateOne({
       _id: replyTo.replyToCommentId
@@ -50,13 +54,25 @@ async function sendComment(req: NextApiRequest, res: NextApiResponse) {
         reply: commentDocument._id
       }
     })
+    if (replyTo.topCommentId) {
+      await commentModel.updateOne(
+        {
+          _id: replyTo.topCommentId
+        }, {
+          $push: {
+            replyReply: commentDocument._id
+          }
+        }
+      )
+    }
   } else {
     commentDocument = await commentModel.create({
       content,
       commenterId: commenterAccountDocument._id,
       createTime: new Date().getTime(),
       like: 0,
-      reply: []
+      reply: [],
+      replyReply: []
     })
   }
   const commentId = commentDocument._id
