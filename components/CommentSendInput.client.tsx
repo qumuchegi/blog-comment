@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react'
 import postComment from '../lib/network/postComment'
 import postReply, { Params as PostReplyParams } from '../lib/network/postReply'
-import Button from './button'
+import Button from './Button'
 import styles from './styles/CommentSendInput.module.css'
 import Image from 'next/image' 
 import CommentItem from './CommentItem.client'

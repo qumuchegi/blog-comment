@@ -4,7 +4,7 @@ import { ResData as CommentInfoRes } from '../lib/network/getCommentInfoById'
 import postLikeComment from '../lib/network/postLike'
 import CommentSendInput from './CommentSendInput.client'
 import styles from './styles/CommentItem.module.css'
-import Button from './button'
+import Button from './Button'
 import Image from 'next/image' 
 
 /**
