@@ -15,7 +15,15 @@
 6. 将评论组件部署完成后，在你需要引入评论组件的网页，用 iframe 的方式引入，像这样：
 
 ```js
-<iframe src="https://xxxx?articleId=xxxx" />
+<iframe
+  src="https://xxxx?articleId=xxxx"
+  style={{
+    width: '100%',
+    border: '0px'
+  }}
+  frameBorder='0'
+  scrolling='no'
+/>
 ```
 >说明：iframe 的 src 是你部署后的评论组件的 vercel 托管的上线地址，地址后面的参数 `articleId` 是这个页面上评论组件所属的页面 id，评论组件里面的数据将会用这个 id 作为索引存储.
 

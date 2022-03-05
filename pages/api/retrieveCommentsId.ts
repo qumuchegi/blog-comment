@@ -19,6 +19,7 @@ async function retrieveCommentsId(req: NextApiRequest, res: NextApiResponse) {
   const clusterDocument = await clusterModel.findOne({
     clusterId: clusterId
   })
+  res.setHeader('Cache-Control', 'no-cache')
   if(!clusterDocument) {
     return res.status(200).json({
       code: 0,

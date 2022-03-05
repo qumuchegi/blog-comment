@@ -14,6 +14,7 @@ async function retrieveCommentsByCommentIds(req: NextApiRequest, res: NextApiRes
   const {
     commentIds
   } = req.body
+  res.setHeader('Cache-Control', 'no-cache')
   const accountModel = await retrieveAccountModel()
   const commentModel = await retrieveCommentModel()
   const rawComments = (

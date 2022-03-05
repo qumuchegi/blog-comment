@@ -12,6 +12,7 @@ async function retrieveCommentsByClusterId(req: NextApiRequest, res: NextApiResp
     offset = 0,
     limit = 10
   } = req.query
+  res.setHeader('Cache-Control', 'no-cache')
   const accountModel = await retrieveAccountModel()
   const commentModel = await retrieveCommentModel()
   const clusterModel = await retrieveClusterModel()
