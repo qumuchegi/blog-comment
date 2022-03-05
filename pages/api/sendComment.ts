@@ -4,7 +4,6 @@ import {
   retrieveCommentModel,
   retrieveClusterModel
 } from '../../lib/database/index'
-import { verifyJWTToken, signJWTToken } from '../../lib/jwt/index'
 import catchError from './utils/wrapper/catchError'
 
 async function sendComment(req: NextApiRequest, res: NextApiResponse) {

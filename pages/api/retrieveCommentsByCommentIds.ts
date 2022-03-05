@@ -16,9 +16,12 @@ async function retrieveCommentsByCommentIds(req: NextApiRequest, res: NextApiRes
   } = req.body
   const accountModel = await retrieveAccountModel()
   const commentModel = await retrieveCommentModel()
-  const rawComments = (await commentModel.find({
-    _id: commentIds
-  }).populate('replyTo.replyToCommentId').populate('replyTo.replyToAccountId')).map(item => ({
+  const rawComments = (
+    await commentModel.find({
+      _id: commentIds
+    }).populate('replyTo.replyToCommentId')
+      .populate('replyTo.replyToAccountId')
+  ).map(item => ({
     ...item.toObject(),
     ['orderHelperKey']: (item._id).toString()
   }))

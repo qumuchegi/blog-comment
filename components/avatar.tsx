@@ -9,6 +9,6 @@ export default function Avatar({
   defaultUrl,
 }: Props) {
   return <div>
-    <img src={avatarUrl || defaultUrl} alt=''/>
+    <img src={avatarUrl || defaultUrl} alt='' style={{width: '30px', height: '30px', borderRadius: '30px'}}/>
   </div>
 }

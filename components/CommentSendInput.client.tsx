@@ -1,6 +1,9 @@
 import React, { useCallback, useState } from 'react'
 import postComment from '../lib/network/postComment'
 import postReply, { Params as PostReplyParams } from '../lib/network/postReply'
+import Button from './button'
+import styles from './styles/CommentSendInput.module.css'
+import Image from 'next/image' 
 
 interface Props {
   articleId: string
@@ -23,18 +26,18 @@ export default function CommentSendInput({
   replyTo
 }: Props) {
   const [value, setValue] = useState('')
-  const onInputChange: React.ChangeEventHandler<HTMLInputElement> = useCallback((e) => {
+  const onInputChange: React.ChangeEventHandler<HTMLTextAreaElement> = useCallback((e) => {
     setValue(e.target.value)
   }, [])
   const _onSend = useCallback(async () => {
-    if (!articleId) return
+    if (!articleId || !value) return
     let params = {
       clusterId: articleId,
       content: value,
       // TODO: 暂时用匿名账号发送评论
       commenter: {
         userName: 'Anonymous',
-        avatar: '',
+        avatar: '/anonymous_avatar.png',
         email: '',
         url: ''
       }
@@ -61,21 +64,20 @@ export default function CommentSendInput({
       onFailed?.()
     }
   }, [articleId, onFailed, onSuccess, replyTo, value])
-  return <div>
-    <div>
-      <input
-        style={{
-          flex: '1',
-          color: 'black',
-          padding: '10px'
-        }}
-        type='text'
-        placeholder={replyTo ? `回复 ${replyTo.toAccountName}` : '评论～'}
-        onChange={onInputChange}
-      />
-    </div>
-    <div>
-      <div onClick={_onSend}>发送</div>
+  return <div className={styles.container}>
+    <textarea
+      style={{
+        flex: 1,
+        borderRadius: '5px',
+        color: 'black',
+        padding: '10px',
+        height: '70px'
+      }}
+      placeholder={replyTo ? `回复 @${replyTo.toAccountName}` : '评论～'}
+      onChange={onInputChange}
+    />
+    <div style={{flexGrow: 0}}>
+      <Button onClick={_onSend} text='发送' width={50} height={70}/>
     </div>
   </div>
 }

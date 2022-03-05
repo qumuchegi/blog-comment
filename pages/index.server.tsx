@@ -8,13 +8,14 @@ import React, { Suspense } from 'react'
 
 const Home: NextPage = () => {
   return (<div style={{
-    flex: '1'
+    flex: 1
   }}>
     <div style={{
       position: 'sticky',
-      backgroundColor: '#fff',
+      // backgroundColor: '#bbb',
       padding: '10px',
-      top: '0'
+      top: '0',
+      flexGrow: 1
     }}>
       <CommentSendInput
         articleId="4edd40c86762e0fb12000003"

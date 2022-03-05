@@ -4,8 +4,6 @@ import {
   retrieveCommentModel,
   retrieveClusterModel
 } from '../../lib/database/index'
-import { SchemaNames } from '../../lib/database/schema'
-import { verifyJWTToken } from '../../lib/jwt/index'
 import catchError from './utils/wrapper/catchError'
 
 async function retrieveCommentsByClusterId(req: NextApiRequest, res: NextApiResponse) {

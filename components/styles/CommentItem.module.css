@@ -1,0 +1,35 @@
+.header {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+.header>div {
+  margin-right: 10px;
+}
+.header .userName {
+  margin-left: 10px;
+  color: rgb(96, 165, 235);
+}
+.footer {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+.footer>div{
+  margin-right: 10px;
+}
+.footer>.time {
+  color: #aaa;
+  font-size: 0.7rem;
+}
+.footer>.like{
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+.footer>.like>div{
+  margin-right: 10px;
+}
+.commentContent {
+  padding-left: 40px;
+}

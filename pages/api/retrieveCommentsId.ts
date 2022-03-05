@@ -4,7 +4,6 @@ import {
   retrieveCommentModel,
   retrieveClusterModel
 } from '../../lib/database/index'
-import { verifyJWTToken } from '../../lib/jwt/index'
 import catchError from './utils/wrapper/catchError'
 import { flatArr } from '../../lib/utils/array'
 
