@@ -77,18 +77,19 @@ async function sendComment(req: NextApiRequest, res: NextApiResponse) {
   }
   const commentId = commentDocument._id
   let clusterDocument = await clusterModel.findOne({
-    id: clusterId
+    clusterId: clusterId
   })
   if(!clusterDocument) {
     clusterDocument = await clusterModel.create(
       {
+        clusterId: clusterId,
         comments: [{id: commentId, isTopComment: !replyTo}]
       }
     )
   } else {
     await clusterModel.updateOne(
       {
-        id: clusterId
+        clusterId: clusterId
       },
       {
         comments: [...clusterDocument.get('comments'), {id: commentId, isTopComment: !replyTo}]

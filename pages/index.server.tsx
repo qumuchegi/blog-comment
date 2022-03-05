@@ -1,11 +1,16 @@
-import type { NextPage } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
 import CommentSendInput from '../components/CommentSendInput.client'
 import CommentList from '../components/CommentList.server'
 import React from 'react'
 
-const Home: NextPage = () => {
+  //@ts-ignore
+const Home = (props) => {
+  const searchObj = props.router.query
+  // console.log({searchObj})
+  //@ts-ignore
+  const clusterId = searchObj['articleId'] || '4edd40c86762e0fb12000003'
+  // console.log({clusterId});
   return (<div style={{
     flex: 1
   }}>
@@ -18,14 +23,14 @@ const Home: NextPage = () => {
       flexGrow: 1
     }}>
       <CommentSendInput
-        articleId="4edd40c86762e0fb12000003"
+        articleId={clusterId}
       /> 
     </div>
     <div style={{
       padding: '10px'
     }}>
       <CommentList
-        clusterId="4edd40c86762e0fb12000003"
+        clusterId={clusterId}
         offset={0}
       />
     </div>

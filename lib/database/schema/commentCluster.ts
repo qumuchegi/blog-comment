@@ -2,12 +2,12 @@ import mongoose from "mongoose"
 import { SchemaNames } from './type'
 
 export interface Cluster {
-  id: string,
+  clusterId: string,
   comments: Array<{id: string, isTopComment: boolean,}> // comment id array
 }
 const clusterSchema = {
   // _id: mongoose.Schema.Types.ObjectId,
-  isTopComment: Boolean,
+  clusterId: String,
   comments: Array // comment id array
 }
 export const CommentClusterSchema = {
