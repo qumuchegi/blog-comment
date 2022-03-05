@@ -4,3 +4,6 @@
   align-items: center;
   flex: 1;
 }
+.newComment {
+  background-color: aliceblue;
+}

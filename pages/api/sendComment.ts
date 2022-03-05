@@ -33,6 +33,7 @@ async function sendComment(req: NextApiRequest, res: NextApiResponse) {
     })
   }
   let commentDocument
+  const now = new Date().getTime()
   if (replyTo) {
     commentDocument = await commentModel.create({
       content,
@@ -68,7 +69,7 @@ async function sendComment(req: NextApiRequest, res: NextApiResponse) {
     commentDocument = await commentModel.create({
       content,
       commenterId: commenterAccountDocument._id,
-      createTime: new Date().getTime(),
+      createTime: now,
       like: 0,
       reply: [],
       replyReply: []
@@ -98,17 +99,25 @@ async function sendComment(req: NextApiRequest, res: NextApiResponse) {
     code: 0,
     msg: 'success',
     data: {
-      accountId: commenterAccountDocument._id,
-      avatar: commenterAccountDocument.avatar,
-      userName: commenterAccountDocument.userName,
-      url: commenterAccountDocument.url,
-      email: commenterAccountDocument.email,
-      commentId: commentDocument._id,
-      commentContent: commentDocument.content,
-      commentCreateTime: commentDocument.createTime,
-      commentLikes: commentDocument.like,
-      commentReply: commentDocument.reply,
-      replyTo
+      newComment: {
+        id: commentDocument._id,
+        content: commentDocument.content,
+        createTime: commentDocument.createTime,
+        likeNumber: 0,
+        isReply: !!commentDocument.replyTo,
+        replyTo: replyTo ? {
+          replyToCommentId: (await commentModel.findById(replyTo.replyToCommentId))?.toObject(),
+          replyToAccountId: commenterAccountDocument.toObject()
+        } : undefined,
+        replyNumber: 0,
+        commenter: {
+          accountId: commenterAccountDocument?._id,
+          userName: commenterAccountDocument?.userName,
+          avatar: commenterAccountDocument?.avatar,
+          url: commenterAccountDocument?.url,
+          email: commenterAccountDocument?.email,
+        }
+      }
     }
   })
 }

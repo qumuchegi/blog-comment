@@ -13,20 +13,24 @@ import Image from 'next/image'
 export default function CommentItem({
   articleId,
   commentInfo,
-  topCommentId
+  topCommentId,
+  hideInteract
 }: {
   articleId: string,
   commentInfo: CommentInfoRes['comments'][0],
-  topCommentId?: string
+  topCommentId?: string,
+  hideInteract?: boolean
 }) {
   const [isShowReplyInput, setIsShowReplyInput] = useState(false)
   const [likeNumber, setLikeNumber] = useState(commentInfo?.likeNumber ?? 0)
+  const [newReplyInfo, setNewReplyInfo] = useState<CommentInfoRes['comments']>([])
   const isLiked = useRef(false)
   const onClickReply = () => {
     setIsShowReplyInput(true)
   }
-  const onSendReplySuccess = () => {
+  const onSendReplySuccess = (newReply: CommentInfoRes['comments'][0]) => {
     setIsShowReplyInput(false)
+    setNewReplyInfo(pre => [newReply, ...pre])
   }
   const closeReply = () => {
     setIsShowReplyInput(false)
@@ -66,29 +70,26 @@ export default function CommentItem({
         <div className={styles.footer}>
           <div className={styles.time}>{new Date(commentInfo?.createTime).toLocaleString()}</div>
           {
-            isShowReplyInput
-            ? <Button
-                onClick={closeReply}
-                text='取消回复'
-                width={100}
-                height={30}
-              />
-            : <Button
-              onClick={onClickReply}
-              width={50}
+            !hideInteract &&
+            <Button
+              onClick={isShowReplyInput ? closeReply : onClickReply}
+              text={isShowReplyInput ? '取消回复' : '回复'}
+              width={100}
               height={30}
-              text='回复'
             />
           }
-          <div className={styles.like}>
-            <Button
-              onClick={likeComment}
-              text={
-                <Image src='/good.png' alt='赞' width='20' height='20'/>
-              }
-            />
-            <span>{likeNumber}</span>
-          </div>
+          {
+            !hideInteract && 
+            <div className={styles.like}>
+              <Button
+                onClick={likeComment}
+                text={
+                  <Image src='/good.png' alt='赞' width='20' height='20'/>
+                }
+              />
+              <span>{likeNumber}</span>
+            </div>
+          }
         </div>
         {
           isShowReplyInput &&
@@ -106,6 +107,19 @@ export default function CommentItem({
               onSuccess={onSendReplySuccess}
             /> 
           </div>
+        }
+      </div>
+    }
+    {
+      newReplyInfo
+      && <div className={styles.newReply}>
+        {
+          newReplyInfo.map(item => <CommentItem
+            key={item.id}
+            commentInfo={item}
+            articleId={articleId}
+            hideInteract={true}
+          />)
         }
       </div>
     }

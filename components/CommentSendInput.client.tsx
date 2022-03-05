@@ -4,11 +4,13 @@ import postReply, { Params as PostReplyParams } from '../lib/network/postReply'
 import Button from './button'
 import styles from './styles/CommentSendInput.module.css'
 import Image from 'next/image' 
+import CommentItem from './CommentItem.client'
+import { ResData as CommentInfoRes } from '../lib/network/getCommentInfoById'
 
 interface Props {
   articleId: string
   inputStyle?: React.StyleHTMLAttributes<'html'>
-  onSuccess?: () => void,
+  onSuccess?: (newComment: CommentInfoRes['comments'][0]) => void,
   onFailed?: () => void
   replyTo?: {
     toAccountId: string,
@@ -26,6 +28,7 @@ export default function CommentSendInput({
   replyTo
 }: Props) {
   const [value, setValue] = useState('')
+  const [newCommentInfo, setNewCommentInfo] = useState<CommentInfoRes['comments'][0]>()
   const onInputChange: React.ChangeEventHandler<HTMLTextAreaElement> = useCallback((e) => {
     setValue(e.target.value)
   }, [])
@@ -59,25 +62,38 @@ export default function CommentSendInput({
     try {
       //@ts-ignore
       const res = await request(params)
-      onSuccess?.()
+      setNewCommentInfo(res.newComment)
+      onSuccess?.(res.newComment)
     } catch (err) {
       onFailed?.()
     }
   }, [articleId, onFailed, onSuccess, replyTo, value])
-  return <div className={styles.container}>
-    <textarea
-      style={{
-        flex: 1,
-        borderRadius: '5px',
-        color: 'black',
-        padding: '10px',
-        height: '70px'
-      }}
-      placeholder={replyTo ? `回复 @${replyTo.toAccountName}` : '评论～'}
-      onChange={onInputChange}
-    />
-    <div style={{flexGrow: 0}}>
-      <Button onClick={_onSend} text='发送' width={50} height={70}/>
+  return <div>
+    <div className={styles.container}>
+      <textarea
+        style={{
+          flex: 1,
+          borderRadius: '5px',
+          color: 'black',
+          padding: '10px',
+          height: '70px'
+        }}
+        placeholder={replyTo ? `回复 @${replyTo.toAccountName}` : '评论～'}
+        onChange={onInputChange}
+      />
+      <div style={{flexGrow: 0}}>
+        <Button onClick={_onSend} text='发送' width={50} height={70}/>
+      </div>
     </div>
+    {
+        newCommentInfo
+        && <div className={styles.newComment}>
+          <CommentItem
+            commentInfo={newCommentInfo}
+            articleId={articleId}
+            hideInteract={true}
+          />
+        </div>
+      }
   </div>
 }

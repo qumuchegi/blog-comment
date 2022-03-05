@@ -1,10 +1,9 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
-import styles from '../styles/Home.module.css'
 import CommentSendInput from '../components/CommentSendInput.client'
 import CommentList from '../components/CommentList.server'
-import React, { Suspense } from 'react'
+import React from 'react'
 
 const Home: NextPage = () => {
   return (<div style={{
@@ -12,7 +11,8 @@ const Home: NextPage = () => {
   }}>
     <div style={{
       position: 'sticky',
-      // backgroundColor: '#bbb',
+      zIndex: 10,
+      backgroundColor: '#fff',
       padding: '10px',
       top: '0',
       flexGrow: 1
