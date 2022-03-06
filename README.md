@@ -42,4 +42,4 @@
 
 ## issues
 
-1. next.js 似乎对评论页面有缓存，所以新的评论数据发送成功后，不能立即刷新出来
+1. 遇到一个可能是和 react 18 有关的 bug，`An error occurred during hydration. The server HTML was replaced with client content`， https://github.com/facebook/react/issues/22784

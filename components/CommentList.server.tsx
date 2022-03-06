@@ -1,6 +1,6 @@
 import React, { Suspense } from 'react'
 import getCommentIds, { ResData as CommentIds  } from '../lib/network/getCommentIds'
-import useData from '../lib/cache/useData'
+import {useFetchData} from '../lib/cache/useData'
 import CommentItem from './CommentItem.client'
 import getCommentInfoById, { ResData as CommentInfoRes } from '../lib/network/getCommentInfoById'
 
@@ -55,7 +55,7 @@ function CommentListWithData({
   }
 
   // query comment and reply details by id
-  const commentInfos: (CommentInfoRes['comments'][0] & {topCommentId?: string})[] = useData(`CommentItem-${clusterId}-${offset}`, async () => {
+  const commentInfos: (CommentInfoRes['comments'][0] & {topCommentId?: string})[] = useFetchData(`CommentItem-${clusterId}-${offset}`, async () => {
     const commentIds = await fetchComments()
     try {
       let flatIds: string[] = []

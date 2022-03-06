@@ -8,7 +8,11 @@ import styles from './styles/CommentItem.module.css'
 import Button from '@mui/material/Button'
 import Image from 'next/image' 
 import Snackbar from '@mui/material/Snackbar'
+import dayjs from 'dayjs'
+import relativeTimePulgin from'dayjs/plugin/relativeTime'
 
+dayjs.extend(relativeTimePulgin)
+const ONE_DAY = 1000 * 60 * 60 * 24
 /**
  * 不要用 useState、useEffect、等
  */
@@ -56,9 +60,10 @@ export default function CommentItem({
       alert('点赞失败！')
     }
   }
+  const now = new Date().getTime()
   return <div style={{
     marginLeft: commentInfo?.isReply ? '40px' : '0px',
-    borderLeft: commentInfo?.isReply ? 'solid 1px #bbb' : '',
+    borderLeft: commentInfo?.isReply ? 'solid 1px #bbb' : undefined,
     marginBottom: '0px'
   }} className={styles.body}>
     <Snackbar
@@ -85,7 +90,11 @@ export default function CommentItem({
         </div>
         <div className={styles.commentContent}>{commentInfo?.content}</div>
         <div className={styles.footer}>
-          <div className={styles.time}>{new Date(commentInfo?.createTime).toLocaleString()}</div>
+          <div className={styles.time}>{
+            now - commentInfo?.createTime > ONE_DAY
+             ? dayjs(commentInfo?.createTime).format('YYYY/MM/DD/ HH:mm:ss')
+             : dayjs(commentInfo?.createTime).fromNow()
+          }</div>
           {
             !hideInteract && <div className={styles.like}>
               <Button

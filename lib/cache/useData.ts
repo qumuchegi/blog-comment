@@ -1,6 +1,6 @@
 const cache: Record<string, any> = {}
 
-export default function useData<T>(key: string, fetcher: () => Promise<T>) {
+export function useFetchData<T>(key: string, fetcher: () => Promise<T>): T {
   if (!cache[key]) {
     let data: T
     let promise: Promise<T>
@@ -10,5 +10,7 @@ export default function useData<T>(key: string, fetcher: () => Promise<T>) {
       throw promise
     }
   }
-  return cache[key]()
+  const temp = cache[key]()
+  cache[key] = null
+  return temp
 }
