@@ -1,8 +1,13 @@
-这是一个评论组件系统， 开箱即用
+这是一个评论组件, 由 vercel/Next.js 托管, mongoDB 作为数据库，可以嵌入任意的 web 页面，前端框架无关
 
 ## todo
+
+- [x] iframe 组件导入
+
 - [] 支持 github 和 qq 登录
-- [] markdown 格式输入、图床 CDN 支持
+
+- [] markdown 格式输入、图床支持
+
 - [] 主题定制
 
 ## use
