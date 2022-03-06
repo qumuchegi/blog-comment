@@ -4,8 +4,10 @@ import { ResData as CommentInfoRes } from '../lib/network/getCommentInfoById'
 import postLikeComment from '../lib/network/postLike'
 import CommentSendInput from './CommentSendInput.client'
 import styles from './styles/CommentItem.module.css'
-import Button from './Button'
+// import Button from './Button'
+import Button from '@mui/material/Button'
 import Image from 'next/image' 
+import Snackbar from '@mui/material/Snackbar'
 
 /**
  * 不要用 useState、useEffect、等
@@ -22,6 +24,7 @@ export default function CommentItem({
   hideInteract?: boolean
 }) {
   const [isShowReplyInput, setIsShowReplyInput] = useState(false)
+  const [isShowLikedWarn, setIsShowLikedWarn] = useState(false)
   const [likeNumber, setLikeNumber] = useState(commentInfo?.likeNumber ?? 0)
   const [newReplyInfo, setNewReplyInfo] = useState<CommentInfoRes['comments']>([])
   const isLiked = useRef(false)
@@ -36,7 +39,13 @@ export default function CommentItem({
     setIsShowReplyInput(false)
   }
   const likeComment = async () => {
-    if (isLiked.current) return alert('你已经赞过了')
+    if (isLiked.current) {
+      setIsShowLikedWarn(true)
+      setTimeout(() => {
+        setIsShowLikedWarn(false)
+      }, 2000)
+      return
+    }
     try {
       await postLikeComment({
         commentId: commentInfo?.id
@@ -48,9 +57,17 @@ export default function CommentItem({
     }
   }
   return <div style={{
-    paddingLeft: commentInfo?.isReply ? '30px' : '0px',
-    marginBottom: '10px'
+    marginLeft: commentInfo?.isReply ? '40px' : '0px',
+    borderLeft: commentInfo?.isReply ? 'solid 1px #bbb' : '',
+    marginBottom: '0px'
   }} className={styles.body}>
+    <Snackbar
+      anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      open={isShowLikedWarn}
+      // onClose={handleClose}
+      message="你已经赞过了"
+      // key={vertical + horizontal}
+    />
     {
       commentInfo
       && <div>
@@ -70,27 +87,30 @@ export default function CommentItem({
         <div className={styles.footer}>
           <div className={styles.time}>{new Date(commentInfo?.createTime).toLocaleString()}</div>
           {
-            !hideInteract &&
-            <Button
-              onClick={isShowReplyInput ? closeReply : onClickReply}
-              text={
-                isShowReplyInput
-                ? '取消回复'
-                : <Image src={'/reply.png'} width={20} height={20} alt='回复'/>
-              }
-              width={100}
-              height={30}
-            />
+            !hideInteract && <div className={styles.like}>
+              <Button
+                onClick={isShowReplyInput ? closeReply : onClickReply}
+                // height={30}
+              >
+                {
+                  isShowReplyInput
+                  ? '取消'
+                  : <Image src={'/reply.png'} width={20} height={20} alt='回复'/>
+                }
+              </Button>
+              <span>{commentInfo?.replyNumber}</span>
+            </div>
           }
           {
             !hideInteract && 
             <div className={styles.like}>
               <Button
                 onClick={likeComment}
-                text={
+              >
+                {
                   <Image src='/good.png' alt='赞' width='20' height='20'/>
                 }
-              />
+              </Button>
               <span>{likeNumber}</span>
             </div>
           }
