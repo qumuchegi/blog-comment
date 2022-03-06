@@ -1,17 +1,14 @@
 这是一个评论组件, 由 vercel/Next.js 托管, mongoDB 作为数据库，可以嵌入任意的 web 页面，前端框架无关
 
-[![Next.js][Next.js]][https://nextjs.org/]
+<img src='https://img.shields.io/badge/React-18.0.0--rc.0-green'/>
+<img src='https://img.shields.io/badge/react--dom-18.0.0--rc.0-red'/>
+<img src='https://img.shields.io/badge/Next.js-%5E12.1.0-orange'/>
+<img src='https://img.shields.io/badge/mongoose-%5E6.2.4-blue'/>
 
-[![MongoDB][MongoDB]][https://www.mongodb.com/]
-
-[![React 18.0.0-rc.0][React 18.0.0-rc.0]][https://reactjs.org/]
-
-[![react-dom 18.0.0-rc.0][react-dom 18.0.0-rc.0]][https://reactjs.org/]
-
-
+<hr/>
 ## todo
 
-- [x] iframe 组件导入
+- [x] iframe 组件封装导入评论组件
 
 - [] 支持 github 和 qq 登录
 
