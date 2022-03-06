@@ -1,5 +1,14 @@
 这是一个评论组件, 由 vercel/Next.js 托管, mongoDB 作为数据库，可以嵌入任意的 web 页面，前端框架无关
 
+[![Next.js][Next.js]][https://nextjs.org/]
+
+[![MongoDB][MongoDB]][https://www.mongodb.com/]
+
+[![React 18.0.0-rc.0][React 18.0.0-rc.0]][https://reactjs.org/]
+
+[![react-dom 18.0.0-rc.0][react-dom 18.0.0-rc.0]][https://reactjs.org/]
+
+
 ## todo
 
 - [x] iframe 组件导入
@@ -21,13 +30,15 @@
 
 ```js
 <iframe
-  src="https://xxxx?articleId=xxxx"
+  src={`https://xxxxx.vercel.app/?articleId=${params.articleId}`}
   style={{
     width: '100%',
-    border: '0px'
+    minHeight: '600px',
+    maxHeight: '800px',
+    border: '0px',
+    scrollbarWidth: 'none'
   }}
   frameBorder='0'
-  scrolling='no'
 />
 ```
 >说明：iframe 的 src 是你部署后的评论组件的 vercel 托管的上线地址，地址后面的参数 `articleId` 是这个页面上评论组件所属的页面 id，评论组件里面的数据将会用这个 id 作为索引存储.
