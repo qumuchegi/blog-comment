@@ -1,7 +1,7 @@
-import React, { Suspense } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import getCommentIds, { ResData as CommentIds  } from '../lib/network/getCommentIds'
 import {useFetchData} from '../lib/cache/useData'
-import CommentItem from './CommentItem.client'
+import CommentItem from './CommentItem'
 import getCommentInfoById, { ResData as CommentInfoRes } from '../lib/network/getCommentInfoById'
 
 const LIMIT = 10
@@ -12,8 +12,9 @@ function CommentListWithData({
   clusterId: string,
   offset?: number
 }) {
+  const [commentInfos, setCommentInfos] = useState<(CommentInfoRes['comments'][0] & {topCommentId?: string})[]>([])
   // query all comment and reply id
-  const fetchComments: () => Promise<[] | CommentIds['ids']> = async () => {
+  const fetchComments: () => Promise<[] | CommentIds['ids']> = useCallback(async () => {
     try {
       const data = await getCommentIds(
         {
@@ -27,10 +28,10 @@ function CommentListWithData({
       console.error(err)
       return []
     }
-  }
+  }, [clusterId, offset])
 
   // mark topCommentId to reply
-  const markTopCommentTopCommentInfos= (
+  const markTopCommentTopCommentInfos= useCallback((
     commentIds: CommentIds['ids'],
     commentInfos: CommentInfoRes['comments']
   ) => {
@@ -52,10 +53,10 @@ function CommentListWithData({
       startIndex += endIndex + 1
     })
     return result.filter(i => i)
-  }
+  }, [])
 
   // query comment and reply details by id
-  const commentInfos: (CommentInfoRes['comments'][0] & {topCommentId?: string})[] = useFetchData(`CommentItem-${clusterId}-${offset}`, async () => {
+const fetch = useCallback( async () => {
     const commentIds = await fetchComments()
     try {
       let flatIds: string[] = []
@@ -69,13 +70,16 @@ function CommentListWithData({
          ids: flatIds
        }
       )
-      return markTopCommentTopCommentInfos(commentIds, data.comments)
+      setCommentInfos( markTopCommentTopCommentInfos(commentIds, data.comments) )
     } catch (err) {
       console.error({err});
-      return []
+      setCommentInfos( [] )
     }
-  })
+  }, [fetchComments, markTopCommentTopCommentInfos])
 
+  useEffect(() => {
+    fetch()
+  }, [fetch])
   // console.log({commentInfos});
   return <div>
     {
@@ -100,10 +104,8 @@ export default function CommentList(
     offset?: number
   }
 ) {
-  return <Suspense fallback={<div>loading</div>}>
-    <CommentListWithData
-      clusterId={clusterId}
-      offset={offset}
-    />
-  </Suspense>
+  return <CommentListWithData
+    clusterId={clusterId}
+    offset={offset}
+  />
 }

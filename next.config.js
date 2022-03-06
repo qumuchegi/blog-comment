@@ -4,11 +4,11 @@ const nextConfig = {
     // ssr and displayName are configured by default
     styledComponents: true,
   },
-  reactStrictMode: true,
-  experimental: {
-    runtime: 'nodejs',
-    serverComponents: true,
-  },
+  // reactStrictMode: true,
+  // experimental: {
+  //   runtime: 'nodejs',
+  //   // serverComponents: true,
+  // },
 }
 
 module.exports = nextConfig

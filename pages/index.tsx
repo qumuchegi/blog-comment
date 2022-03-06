@@ -1,15 +1,15 @@
-import Head from 'next/head'
-import Image from 'next/image'
-import CommentSendInput from '../components/CommentSendInput.client'
-import CommentList from '../components/CommentList.server'
+import CommentSendInput from '../components/CommentSendInput'
+import CommentList from '../components/CommentList'
 import React from 'react'
+import { GetServerSideProps } from 'next'
 
   //@ts-ignore
-const Home = (props) => {
-  const searchObj = props.router.query
+const Home = ({
+  articleId
+}) => {
   // console.log({searchObj})
   //@ts-ignore
-  const clusterId = searchObj['articleId'] || '4edd40c86762e0fb12000003'
+  const clusterId = articleId || '4edd40c86762e0fb12000003'
   // console.log({clusterId});
   return (<div style={{
     flex: 1
@@ -38,3 +38,12 @@ const Home = (props) => {
 }
 
 export default Home
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { articleId } = context.query
+  return {
+    props: {
+      articleId
+    }
+  }
+}

@@ -1,7 +1,7 @@
 这是一个评论组件, 由 vercel/Next.js 托管, mongoDB 作为数据库，可以嵌入任意的 web 页面，前端框架无关
 
-<img src='https://img.shields.io/badge/React-18.0.0--rc.0-green'/>
-<img src='https://img.shields.io/badge/react--dom-18.0.0--rc.0-red'/>
+<img src='https://img.shields.io/badge/Reac-17.0.2-yellowgreen'/>
+<img src='https://img.shields.io/badge/react--dom-17.0.2-yellowgreen'/>
 <img src='https://img.shields.io/badge/Next.js-%5E12.1.0-orange'/>
 <img src='https://img.shields.io/badge/mongoose-%5E6.2.4-blue'/>
 
@@ -43,4 +43,8 @@
 
 ## issues
 
-1. 遇到一个可能是和 react 18 有关的 bug，`An error occurred during hydration. The server HTML was replaced with client content`， https://github.com/facebook/react/issues/22784
+### 1. 尝试 react server component 遇到的问题：
+
+遇到一个可能是和 react 18 有关的 bug，报错：`An error occurred during hydration. The server HTML was replaced with client content`， https://github.com/facebook/react/issues/22784
+
+为解决这个问题，暂时放弃 react server component 的使用，React 退回稳定版本
