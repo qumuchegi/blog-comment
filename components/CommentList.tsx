@@ -3,6 +3,8 @@ import getCommentIds, { ResData as CommentIds  } from '../lib/network/getComment
 import {useFetchData} from '../lib/cache/useData'
 import CommentItem from './CommentItem'
 import getCommentInfoById, { ResData as CommentInfoRes } from '../lib/network/getCommentInfoById'
+import CircularProgress from '@mui/material/CircularProgress'
+import Box from '@mui/material/Box'
 
 const LIMIT = 10
 function CommentListWithData({
@@ -12,6 +14,7 @@ function CommentListWithData({
   clusterId: string,
   offset?: number
 }) {
+  const [isLoading, setIsLoading] = useState(true)
   const [commentInfos, setCommentInfos] = useState<(CommentInfoRes['comments'][0] & {topCommentId?: string})[]>([])
   // query all comment and reply id
   const fetchComments: () => Promise<[] | CommentIds['ids']> = useCallback(async () => {
@@ -70,6 +73,7 @@ const fetch = useCallback( async () => {
          ids: flatIds
        }
       )
+      setIsLoading(false)
       setCommentInfos( markTopCommentTopCommentInfos(commentIds, data.comments) )
     } catch (err) {
       console.error({err});
@@ -82,6 +86,11 @@ const fetch = useCallback( async () => {
   }, [fetch])
   // console.log({commentInfos});
   return <div>
+    <div style={{ display: 'flex', flex: 1, justifyContent: 'center'}}>
+      {
+        isLoading && <CircularProgress color="inherit" />
+      }
+    </div>
     {
       commentInfos?.length > 0 &&
       commentInfos.map((info) => <div key={info.id}>

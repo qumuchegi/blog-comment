@@ -78,7 +78,7 @@ export default function CommentItem({
       && <div>
         <div className={styles.header}>
           <Avatar avatarUrl={commentInfo?.commenter?.avatar}/>
-          <div>{commentInfo?.commenter?.userName}</div>
+          <div className={styles.userName}>{commentInfo?.commenter?.userName}</div>
           {
             commentInfo?.replyTo &&
             <div>
