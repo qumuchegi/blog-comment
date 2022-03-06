@@ -6,11 +6,10 @@ import { GetServerSideProps } from 'next'
   //@ts-ignore
 const Home = ({
   articleId
+}: {
+  articleId: string
 }) => {
-  // console.log({searchObj})
-  //@ts-ignore
   const clusterId = articleId || '4edd40c86762e0fb12000003'
-  // console.log({clusterId});
   return (<div style={{
     flex: 1
   }}>
@@ -40,7 +39,7 @@ const Home = ({
 export default Home
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { articleId } = context.query
+  const { articleId } = context.query || {}
   return {
     props: {
       articleId
