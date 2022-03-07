@@ -84,6 +84,10 @@ const Home = ({
     }
   }, [])
 
+  useEffect(() => {
+    navigator.serviceWorker.register('/sw-proxy.js')
+  }, [])
+
   return (<div style={{
     flex: 1
   }}>

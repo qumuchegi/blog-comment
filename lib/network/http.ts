@@ -1,6 +1,5 @@
 import axios from 'axios'
 
-// export const BASE_URL = process.env.NODE_ENV === 'development' ? 'http://localhost:3001' : 'https://blog-comment-mocha.vercel.app'
 const Http = {
   _get: async function<
     ReqData extends Object,
