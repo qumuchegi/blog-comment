@@ -27,5 +27,5 @@ export const getCachedGithubAuthInfo = () => {
 const github_auth_clientid = 'a3038c6aecde7bd31b6e'
 export default function openGithubAuth(callbackUrl: string) {
   window.location.href = 
-    `https://github.com/login/oauth/authorize?client_id=${github_auth_clientid}&redirect_uri=${'http://blog-comment-mocha.vercel.app/api/githubLoginCallback?redirect_url=' + callbackUrl}`
+    `https://github.com/login/oauth/authorize?client_id=${github_auth_clientid}&redirect_uri=${'https://blog-comment-mocha.vercel.app/api/githubLoginCallback?redirect_url=' + callbackUrl}`
 }
