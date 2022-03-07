@@ -130,7 +130,7 @@ export default function LoginDialog(
             </MenuItem>)
           }
         </Select>
-        <Button variant="contained" onClick={login} loading>登录</Button>
+        <Button variant="contained" onClick={login}>登录</Button>
       </div>
     </Dialog>
   </div>
