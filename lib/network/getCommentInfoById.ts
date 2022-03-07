@@ -30,6 +30,8 @@ export type ResData = {
       replyToAccountId: {
         _id: string,
         userName: string,
+        customId: string,
+        accountType: 0 | 1,
         email?: string,
         url?: string,
         avatar?: string
@@ -38,6 +40,7 @@ export type ResData = {
     replyNumber: number,
     commenter: {
       accountId: string,
+      accountType: 0 | 1, // 0 - 匿名；1 - github
       userName: string,
       avatar: string,
       url: string,

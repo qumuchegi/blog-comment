@@ -1,17 +1,28 @@
 这是一个评论组件, 由 vercel/Next.js 托管, mongoDB 作为数据库，可以嵌入任意的 web 页面，前端框架无关
 
-<img src='https://img.shields.io/badge/Reac-17.0.2-yellowgreen'/>
-<img src='https://img.shields.io/badge/react--dom-17.0.2-yellowgreen'/>
-<img src='https://img.shields.io/badge/Next.js-%5E12.1.0-orange'/>
-<img src='https://img.shields.io/badge/mongoose-%5E6.2.4-blue'/>
+<a href='https://reactjs.org/versions'>
+  <img src='https://img.shields.io/badge/Reac-17.0.2-yellowgreen'/>
+</a>
+<a href='https://mui.com/'>
+  <img src='https://img.shields.io/badge/%40mui%2Fmaterial-%5E5.4.4-green'/>
+</a>
+<a href='https://reactjs.org/versions'>
+  <img src='https://img.shields.io/badge/react--dom-17.0.2-yellowgreen'/>
+</a>
+<a href='https://nextjs.org/'>
+  <img src='https://img.shields.io/badge/Next.js-%5E12.1.0-orange'/>
+</a>
+<a href='https://mongoosejs.com/'>
+  <img src='https://img.shields.io/badge/mongoose-%5E6.2.4-blue'/>
+</a>
 
 <hr/>
 
-## todo
+## feature
 
-- [x] iframe 组件封装导入评论组件
+- [x] 基本的评论和回复、点赞功能
 
-- [] 支持 github 和 qq 登录
+- [x] 支持 github 登录
 
 - [] markdown 格式输入、图床支持
 

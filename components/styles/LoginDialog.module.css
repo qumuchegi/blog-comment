@@ -1,0 +1,16 @@
+.platformItem {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+.platformItem>span{
+  margin-left: 10px;
+}
+.dialogBody {
+  width: 200px;
+  height: 300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+}

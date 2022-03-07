@@ -34,7 +34,7 @@ async function retrieveCommentsByClusterId(req: NextApiRequest, res: NextApiResp
   })
   const comments = rawComments.map(async item => {
     const commenter = await accountModel.findOne({
-      _id: item.commenterId
+      customId: item.commenterId
     })
     const result = {
       id: item._id,
@@ -45,6 +45,7 @@ async function retrieveCommentsByClusterId(req: NextApiRequest, res: NextApiResp
       replyNumber:  item.reply ? item.reply.length : 0,
       commenter: {
         accountId: commenter?._id,
+        accountType: commenter?.accountType,
         userName: commenter?.userName,
         avatar: commenter?.avatar,
         url: commenter?.url,

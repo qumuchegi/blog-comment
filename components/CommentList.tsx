@@ -9,10 +9,12 @@ import Box from '@mui/material/Box'
 const LIMIT = 10
 function CommentListWithData({
   clusterId,
-  offset = 0
+  offset = 0,
+  beforeInteract
 }: {
   clusterId: string,
-  offset?: number
+  offset?: number,
+  beforeInteract: <T>(hadLoginCallback: T) => T
 }) {
   const [isLoading, setIsLoading] = useState(true)
   const [commentInfos, setCommentInfos] = useState<(CommentInfoRes['comments'][0] & {topCommentId?: string})[]>([])
@@ -98,8 +100,10 @@ const fetch = useCallback( async () => {
           commentInfo={info}
           articleId={clusterId}
           topCommentId={info?.topCommentId}
+          beforeInteract={beforeInteract}
         />
-      </div>)
+      </div>
+      )
     }
   </div>
 }
@@ -107,14 +111,17 @@ const fetch = useCallback( async () => {
 export default function CommentList(
   {
     clusterId,
-    offset = 0
+    offset = 0,
+    beforeInteract
   }: {
     clusterId: string,
-    offset?: number
+    offset?: number,
+    beforeInteract: <T>(hadLoginCallback: T) => T
   }
 ) {
   return <CommentListWithData
     clusterId={clusterId}
     offset={offset}
+    beforeInteract={beforeInteract}
   />
 }

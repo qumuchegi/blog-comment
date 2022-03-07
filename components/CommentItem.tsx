@@ -1,5 +1,5 @@
-import React, { useRef, useState } from 'react'
-import Avatar from './avatar'
+import React, { useRef, useState, useCallback, useMemo } from 'react'
+import Avatar from './Avatar'
 import { ResData as CommentInfoRes } from '../lib/network/getCommentInfoById'
 import postLikeComment from '../lib/network/postLike'
 import CommentSendInput from './CommentSendInput'
@@ -20,12 +20,14 @@ export default function CommentItem({
   articleId,
   commentInfo,
   topCommentId,
-  hideInteract
+  hideInteract,
+  beforeInteract
 }: {
   articleId: string,
   commentInfo: CommentInfoRes['comments'][0],
   topCommentId?: string,
-  hideInteract?: boolean
+  hideInteract?: boolean,
+  beforeInteract: <T>(hadLoginCallback: T) => T
 }) {
   const [isShowReplyInput, setIsShowReplyInput] = useState(false)
   const [isShowLikedWarn, setIsShowLikedWarn] = useState(false)
@@ -42,28 +44,41 @@ export default function CommentItem({
   const closeReply = () => {
     setIsShowReplyInput(false)
   }
-  const likeComment = async () => {
-    if (isLiked.current) {
-      setIsShowLikedWarn(true)
-      setTimeout(() => {
-        setIsShowLikedWarn(false)
-      }, 2000)
-      return
+  const likeComment = useMemo(() => beforeInteract((
+    async () => {
+      if (isLiked.current) {
+        setIsShowLikedWarn(true)
+        setTimeout(() => {
+          setIsShowLikedWarn(false)
+        }, 2000)
+        return
+      }
+      try {
+        await postLikeComment({
+          commentId: commentInfo?.id
+        })
+        setLikeNumber(pre => pre+1)
+        isLiked.current = true
+      } catch (err) {
+        alert('点赞失败！')
+      }
     }
-    try {
-      await postLikeComment({
-        commentId: commentInfo?.id
-      })
-      setLikeNumber(pre => pre+1)
-      isLiked.current = true
-    } catch (err) {
-      alert('点赞失败！')
-    }
-  }
+  )), [beforeInteract, commentInfo?.id])
+  const isCommenterGithubAccount = useMemo(() => {
+    return commentInfo?.commenter?.accountType === 1
+  }, [commentInfo])
+  const isReplyToGithubAccount = useMemo(() => {
+    return commentInfo?.replyTo?.replyToAccountId?.accountType === 1
+  }, [commentInfo])
   const now = new Date().getTime()
+  const onClickCommenterAvatar = useCallback(() => {
+    if (isCommenterGithubAccount) {
+      window.open(commentInfo?.commenter?.url)
+    }
+  }, [commentInfo?.commenter?.url, isCommenterGithubAccount])
   return <div style={{
-    marginLeft: commentInfo?.isReply ? '40px' : '0px',
-    borderLeft: commentInfo?.isReply ? 'solid 1px #bbb' : undefined,
+    paddingLeft: commentInfo?.isReply ? '40px' : '0px',
+    // borderLeft: commentInfo?.isReply ? 'solid 1px #bbb' : undefined,
     marginBottom: '0px'
   }} className={styles.body}>
     <Snackbar
@@ -77,13 +92,25 @@ export default function CommentItem({
       commentInfo
       && <div>
         <div className={styles.header}>
-          <Avatar avatarUrl={commentInfo?.commenter?.avatar}/>
-          <div className={styles.userName}>{commentInfo?.commenter?.userName}</div>
+          <Avatar
+            avatarUrl={commentInfo?.commenter?.avatar}
+            onClick={onClickCommenterAvatar}
+            badgeImgUrl={isCommenterGithubAccount ? '/github.png' : ''}
+            />
+          <div className={styles.userName} onClick={onClickCommenterAvatar}>{commentInfo?.commenter?.userName}</div>
           {
             commentInfo?.replyTo &&
             <div>
               <Image src={'/right-arrow.png'} width={20} height={10} alt='回复'/>
-              <span className={styles.userName}>@{commentInfo?.replyTo?.replyToAccountId?.userName}</span>
+              <span className={styles.userName}>
+                {
+                  isReplyToGithubAccount
+                  ? <a href={commentInfo?.replyTo?.replyToAccountId?.url} target='_blank' rel="noreferrer">
+                    @{commentInfo?.replyTo?.replyToAccountId?.userName}
+                  </a>
+                  : `@${commentInfo?.replyTo?.replyToAccountId?.userName}`
+                }
+              </span>
             </div>
             }
           <div>{commentInfo?.commenter?.email}</div>
@@ -138,6 +165,7 @@ export default function CommentItem({
                 topCommentId: topCommentId
               }}
               onSuccess={onSendReplySuccess}
+              beforeInteract={beforeInteract}
             /> 
           </div>
         }
@@ -152,6 +180,7 @@ export default function CommentItem({
             commentInfo={item}
             articleId={articleId}
             hideInteract={true}
+            beforeInteract={beforeInteract}
           />)
         }
       </div>

@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useState, useMemo } from 'react'
 import postComment from '../lib/network/postComment'
 import postReply, { Params as PostReplyParams } from '../lib/network/postReply'
 // import Button from './Button'
@@ -6,15 +6,16 @@ import Button from '@mui/material/Button'
 import Backdrop from '@mui/material/Backdrop'
 import CircularProgress from '@mui/material/CircularProgress'
 import styles from './styles/CommentSendInput.module.css'
-import Image from 'next/image' 
 import CommentItem from './CommentItem'
 import { ResData as CommentInfoRes } from '../lib/network/getCommentInfoById'
 import TextField from '@mui/material/TextField'
 import Snackbar from '@mui/material/Snackbar'
+import { getCachedGithubAuthInfo } from '../lib/login/github'
 
 interface Props {
   articleId: string
   inputStyle?: React.StyleHTMLAttributes<'html'>
+  beforeInteract: <T>(hadLoginCallback: T) => T
   onSuccess?: (newComment: CommentInfoRes['comments'][0]) => void,
   onFailed?: () => void
   replyTo?: {
@@ -28,6 +29,7 @@ interface Props {
 export default function CommentSendInput({
   articleId,
   inputStyle = {},
+  beforeInteract,
   onSuccess,
   onFailed,
   replyTo
@@ -39,7 +41,8 @@ export default function CommentSendInput({
   const onInputChange: React.ChangeEventHandler<HTMLTextAreaElement> = useCallback((e) => {
     setValue(e.target.value)
   }, [])
-  const _onSend = useCallback(async () => {
+  const _onSend = useMemo(() => beforeInteract((async () => {
+    console.log('_onSend')
     if (!articleId || !value) {
       setIsSendEmptyValue(true)
       setTimeout(() => {
@@ -47,16 +50,30 @@ export default function CommentSendInput({
       }, 2000)
       return
     }
-    let params = {
-      clusterId: articleId,
-      content: value,
-      // TODO: 暂时用匿名账号发送评论
-      commenter: {
+    const maybeLoginedGithubInfo = getCachedGithubAuthInfo()
+    let commenter
+    if (maybeLoginedGithubInfo) {
+      commenter = {
+        id: maybeLoginedGithubInfo.userId,
+        userName: maybeLoginedGithubInfo.username,
+        avatar: maybeLoginedGithubInfo.avatar,
+        email: '',
+        url: maybeLoginedGithubInfo.userHomeUrl
+      }
+    } else {
+      commenter = {
+        id: '',
         userName: 'Anonymous',
         avatar: '/anonymous_avatar.png',
         email: '',
         url: ''
       }
+    }
+    let params = {
+      clusterId: articleId,
+      content: value,
+      // TODO: 暂时用匿名账号发送评论
+      commenter
     }
     let request
     if (replyTo) {
@@ -83,7 +100,7 @@ export default function CommentSendInput({
       onFailed?.()
     }
     setIsSending(false)
-  }, [articleId, onFailed, onSuccess, replyTo, value])
+  })), [articleId, beforeInteract, onFailed, onSuccess, replyTo, value]) 
   return <div>
     <Backdrop
       sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
@@ -109,18 +126,6 @@ export default function CommentSendInput({
         multiline
         color="secondary"
       />
-      {/* <textarea
-        style={{
-          flex: 1,
-          borderRadius: '5px',
-          color: 'black',
-          padding: '10px',
-          height: '70px'
-        }}
-        value={value}
-        placeholder={replyTo ? `回复 @${replyTo.toAccountName}` : '评论～'}
-        onChange={onInputChange}
-      /> */}
       <div style={{flexGrow: 0}}>
        <Button onClick={_onSend} style={{flex:1}} color="secondary">
           发送
@@ -134,6 +139,7 @@ export default function CommentSendInput({
             commentInfo={newCommentInfo}
             articleId={articleId}
             hideInteract={true}
+            beforeInteract={beforeInteract}
           />
         </div>
       }

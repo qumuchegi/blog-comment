@@ -1,6 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import {
-  retrieveAccountModel,
   retrieveCommentModel,
   retrieveClusterModel
 } from '../../lib/database/index'

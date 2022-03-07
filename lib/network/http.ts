@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const BASE_URL = process.env.NODE_ENV === 'development' ? 'http://localhost:3001/' : 'https://blog-comment-mocha.vercel.app/'
+// export const BASE_URL = process.env.NODE_ENV === 'development' ? 'http://localhost:3001' : 'https://blog-comment-mocha.vercel.app'
 const Http = {
   _get: async function<
     ReqData extends Object,
@@ -11,7 +11,7 @@ const Http = {
   ): Promise<ResData> {
     //+ '?' + Object.entries(params).map(([k ,v]) => `${k}=${v}`).join('&')
     const res = await axios({
-      url: BASE_URL + path,
+      url: path,
       method: 'GET',
       params
     }
@@ -31,7 +31,7 @@ const Http = {
     const res = await axios(
       {
         method: 'POST',
-        url: BASE_URL + path,
+        url: path,
         data: {
           ...params
         }

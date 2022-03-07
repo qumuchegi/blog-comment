@@ -6,13 +6,15 @@ export default function catchError(
 ): ApiHandler {
   return async (req, res) => {
     try {
-      apiHandler(req, res)
+      await apiHandler(req, res)
     } catch (err) {
+      // console.error(req.url, err)
       res.status(500)
       .json({
         code: 1,
         msg: 'server error',
-        data: null
+        data: null,
+        error: err
       })
     }
   }

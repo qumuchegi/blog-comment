@@ -1,5 +1,5 @@
 .body {
-  padding: 10px;
+  /* padding: 10px; */
 }
 .body:hover {
   background-color: rgb(243, 255, 254);
@@ -16,6 +16,9 @@
   margin-left: 5px;
   font-size: .8rem;
   color: #565;
+}
+.header .userName:hover {
+  cursor: pointer;
 }
 .footer {
   display: flex;

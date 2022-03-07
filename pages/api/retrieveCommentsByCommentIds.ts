@@ -1,4 +1,3 @@
-import mongoose from 'mongoose'
 import { NextApiRequest, NextApiResponse } from 'next'
 import {
   retrieveAccountModel,
@@ -45,6 +44,7 @@ async function retrieveCommentsByCommentIds(req: NextApiRequest, res: NextApiRes
         replyNumber: item.reply ? (item.reply.length + item.replyReply?.length ?? 0) : 0,
         commenter: {
           accountId: commenter?._id,
+          accountType: commenter?.accountType,
           userName: commenter?.userName,
           avatar: commenter?.avatar,
           url: commenter?.url,

@@ -1,9 +1,11 @@
+import mongoose from 'mongoose'
 import { NextApiRequest, NextApiResponse } from 'next'
 import {
   retrieveAccountModel,
   retrieveCommentModel,
   retrieveClusterModel
 } from '../../lib/database/index'
+import { AccountType } from '../../lib/database/schema/account'
 import catchError from './utils/wrapper/catchError'
 
 async function sendComment(req: NextApiRequest, res: NextApiResponse) {
@@ -22,10 +24,12 @@ async function sendComment(req: NextApiRequest, res: NextApiResponse) {
   const accountModel = await retrieveAccountModel()
   const commentModel = await retrieveCommentModel()
   const clusterModel = await retrieveClusterModel()
-  let commenterAccountDocument = await accountModel.findOne({id: accountId}).exec()
+  let commenterAccountDocument = await accountModel.findOne({customId: accountId}).exec()
   if(!commenterAccountDocument) {
     commenterAccountDocument = await accountModel.create({
-      _id: accountId,
+      // _id: accountId,
+      customId: accountId,
+      accountType: accountId ? AccountType.github : AccountType.Anonymous,
       userName,
       avatar,
       email,
@@ -113,6 +117,7 @@ async function sendComment(req: NextApiRequest, res: NextApiResponse) {
         replyNumber: 0,
         commenter: {
           accountId: commenterAccountDocument?._id,
+          accountType: commenterAccountDocument?.accountType,
           userName: commenterAccountDocument?.userName,
           avatar: commenterAccountDocument?.avatar,
           url: commenterAccountDocument?.url,
