@@ -10,11 +10,13 @@ const LIMIT = 10
 function CommentListWithData({
   clusterId,
   offset = 0,
-  beforeInteract
+  beforeInteract,
+  onDataLoadSuccess
 }: {
   clusterId: string,
   offset?: number,
-  beforeInteract: <T>(hadLoginCallback: T) => T
+  beforeInteract: <T>(hadLoginCallback: T) => T,
+  onDataLoadSuccess?: () => void
 }) {
   const [isLoading, setIsLoading] = useState(true)
   const [commentInfos, setCommentInfos] = useState<(CommentInfoRes['comments'][0] & {topCommentId?: string})[]>([])

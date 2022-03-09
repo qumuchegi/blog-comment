@@ -37,22 +37,27 @@
 3. 打开 vercel dashboard（如果你没有 vercel 账户，先开通），在 vercel dashboard import 刚刚 fork 到 GitHub 的仓库.
 4. import 成功后，在 vercel 这个项目的设置上面设置一些环境变量，设置一个环境变量 `mongodbUrl`, 值为第 1 步你复制的 mongoDB 数据库连接 URL.
 5. 在 vercel 上面点击 deploy 即可部署完成
-6. 将评论组件部署完成后，在你需要引入评论组件的网页，用 iframe 的方式引入，像这样：
+6. 安装 [blog_comment_import_npm](https://www.npmjs.com/package/blog_comment_import_npm), 
+
+```shell
+npm i blog_comment_import_npm
+
+// or
+yarn add blog_comment_import_npm
+```
+
+将评论组件部署完成后，在你需要引入评论组件的网页，像这样：
 
 ```js
-<iframe
-  src={`https://xxxxx.vercel.app/?articleId=${params.articleId}`}
-  style={{
-    width: '100%',
-    minHeight: '600px',
-    maxHeight: '800px',
-    border: '0px',
-    scrollbarWidth: 'none'
-  }}
-  frameBorder='0'
-/>
+import BlogCommentImport from 'blog_comment_import_npm'
+
+  <BlogCommentImport
+    commentDeployUrlHost={'http://xxxx.vercel.app'}
+    pageId={articleId}
+  />
 ```
->说明：iframe 的 src 是你部署后的评论组件的 vercel 托管的上线地址，地址后面的参数 `articleId` 是这个页面上评论组件所属的页面 id，评论组件里面的数据将会用这个 id 作为索引存储.
+
+commentDeployUrlHost 和 pageId 的用法可参考 [blog_comment_import_npm](https://www.npmjs.com/package/blog_comment_import_npm)
 
 ## issues
 

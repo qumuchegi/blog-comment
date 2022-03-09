@@ -1,6 +1,6 @@
 import CommentSendInput from '../components/CommentSendInput'
 import CommentList from '../components/CommentList'
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { GetServerSideProps } from 'next'
 import LoginDialog, { LoginIdentity, AuthPlatform } from '../components/LoginDialog'
 import { entriesToObj } from '../lib/utils/object'
@@ -15,9 +15,6 @@ const Home = ({
   const [loginIdentity, setLoginIdentity] = useState<LoginIdentity>()
   const clusterId = articleId || '4edd40c86762e0fb12000003'
   const onLoginSuccess = useCallback((authType) => {
-    console.log({
-      authType
-    })
     if (authType === AuthPlatform.anonymous) {
       setLoginIdentity({
         userId: '',
@@ -85,12 +82,23 @@ const Home = ({
   }, [])
 
   useEffect(() => {
-    navigator.serviceWorker.register('/sw-proxy.js')
+    const INIT_IFRAME_MSG = 'iframe_init_msg'
+    // document.addEventListener('DOMContentLoaded', () => {
+    //   console.log('DOM fully loaded and parsed'); // 译者注："DOM完全加载以及解析"
+      window.parent?.postMessage(
+        JSON.stringify({
+          msg: INIT_IFRAME_MSG
+        }),
+        "*"
+      )
+    // })
   }, [])
 
-  return (<div style={{
-    flex: 1
-  }}>
+  return (<div
+    id='commentBodyId'
+    style={{
+      flex: 1
+    }}>
     <LoginDialog
       openLoginDialog={openLoginDialog}
       onRequestCLose={useCallback(() => {
@@ -128,6 +136,7 @@ export default Home
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { articleId } = context.query || {}
+
   return {
     props: {
       articleId

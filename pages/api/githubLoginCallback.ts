@@ -10,6 +10,11 @@ const GITHUB_AUTH_CONFIG = {
 }
 async function githubLoginCallback(req: NextApiRequest, res: NextApiResponse) {
   const {code: githubAuthCode, redirect_url} = req.query
+  console.log(
+    'githubLoginCallback',
+    {
+    githubAuthCode, redirect_url
+  })
   const tokenResData = await axios.post(
     'https://github.com/login/oauth/access_token',
     {
@@ -18,13 +23,10 @@ async function githubLoginCallback(req: NextApiRequest, res: NextApiResponse) {
       code: githubAuthCode
     }
   )
-  // console.log({
-  //   tokenResData
-  // })
   const githubAuthToken = tokenResData.data
   //@ts-ignore
   const access_token = entriesToObj(githubAuthToken)?.['access_token']
-  console.log({access_token})
+
   const githubUserInfoRes = await axios.get(`https://api.github.com/user`, {
     headers: {
       Authorization: 'token ' + access_token
@@ -35,7 +37,7 @@ async function githubLoginCallback(req: NextApiRequest, res: NextApiResponse) {
   const cookies = [
     {
       key: 'auth_username',
-      value: userInfo.name
+      value: userInfo.name || userInfo.login
     },
     {
       key: 'auth_avatar',
@@ -61,7 +63,9 @@ async function githubLoginCallback(req: NextApiRequest, res: NextApiResponse) {
       return serialize(key, value, {path: '/'})
     })
   )
-
+  console.log({
+    redirect_url
+  })
   res.redirect(301, redirect_url as string)
 }
 

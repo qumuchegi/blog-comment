@@ -77,7 +77,7 @@ export default function LoginDialog(
     if (selectedPlatform === AuthPlatform.github) {
       try {
         await openGithubAuth(
-          window.location.href//.replace('https', 'http')
+          //window.location.href//.replace('https', 'http')
         )
         const {
           userHomeUrl,

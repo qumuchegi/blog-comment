@@ -14,6 +14,7 @@ export default function catchError(
         code: 1,
         msg: 'server error',
         data: null,
+        path: req.url,
         error: err
       })
     }
