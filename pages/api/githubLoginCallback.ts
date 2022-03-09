@@ -15,6 +15,7 @@ async function githubLoginCallback(req: NextApiRequest, res: NextApiResponse) {
     {
     githubAuthCode, redirect_url
   })
+  
   const tokenResData = await axios.post(
     'https://github.com/login/oauth/access_token',
     {
@@ -24,8 +25,14 @@ async function githubLoginCallback(req: NextApiRequest, res: NextApiResponse) {
     }
   )
   const githubAuthToken = tokenResData.data
+  console.log({
+    githubAuthToken
+  })
   //@ts-ignore
   const access_token = entriesToObj(githubAuthToken)?.['access_token']
+  console.log({
+    access_token
+  })
 
   const githubUserInfoRes = await axios.get(`https://api.github.com/user?access_token=${access_token}`, {
     headers: {
