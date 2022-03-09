@@ -20,15 +20,13 @@
 
 ## feature
 
-- [x] 基本的评论和回复、点赞功能
+- [x] 基本的评论和回复、点赞功能 (已支持)
 
-- [x] 支持 github 登录
+- [x] 支持 github 登录 (已支持)
 
-- [] markdown 格式输入、图床支持
+- [] 主题定制 (正在做)
 
-- [] 主题定制
-
-- [] 国际化
+- [] 国际化 (正在做)
 
 ## use
 
@@ -42,7 +40,7 @@
 ，在 vercel 上面新增两个 环境变量，名字分别为 github_auth_secret 和 github_auth_clientid，值分别设置为 Client secrets 和 Client ID
  的值)，
 
- <img src='./assets/1.png'/>
+ <img src='./assets/1.png' width='300' style="margin-left: 100px"/>
 
 5. 在 vercel 上面 deploy 即可部署完成
 6. 安装 [blog_comment_frame](https://www.npmjs.com/package/blog_comment_frame), 
