@@ -79,7 +79,7 @@ export default function CommentItem({
   return <div style={{
     paddingLeft: commentInfo?.isReply ? '40px' : '0px',
     // borderLeft: commentInfo?.isReply ? 'solid 1px #bbb' : undefined,
-    marginBottom: '0px'
+    // marginBottom: '0px'
   }} className={styles.body}>
     <Snackbar
       anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
@@ -119,7 +119,7 @@ export default function CommentItem({
         <div className={styles.footer}>
           <div className={styles.time}>{
             now - commentInfo?.createTime > ONE_DAY
-             ? dayjs(commentInfo?.createTime).format('YYYY/MM/DD/ HH:mm:ss')
+             ? dayjs(commentInfo?.createTime).format('YYYY/MM/DD/')
              : dayjs(commentInfo?.createTime).fromNow()
           }</div>
           {
@@ -131,7 +131,7 @@ export default function CommentItem({
                 {
                   isShowReplyInput
                   ? '取消'
-                  : <Image src={'/reply.png'} width={20} height={20} alt='回复'/>
+                  : <Image src={'/reply.png'} width={15} height={15} alt='回复'/>
                 }
               </Button>
               <span>{commentInfo?.replyNumber}</span>
@@ -144,7 +144,7 @@ export default function CommentItem({
                 onClick={likeComment}
               >
                 {
-                  <Image src='/good.png' alt='赞' width='20' height='20'/>
+                  <Image src='/good.png' alt='赞' width='15' height='15'/>
                 }
               </Button>
               <span>{likeNumber}</span>

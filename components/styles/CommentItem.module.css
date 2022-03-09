@@ -1,10 +1,14 @@
 .body {
   /* padding: 10px; */
+  margin-bottom: 10px;
+  border: solid 1px #eee;
+  border-radius: 7px;
 }
 .body:hover {
   background-color: rgb(243, 255, 254);
 }
 .header {
+  padding: 5px;
   display: flex;
   justify-content: flex-start;
   align-items: center;
