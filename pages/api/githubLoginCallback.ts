@@ -27,7 +27,7 @@ async function githubLoginCallback(req: NextApiRequest, res: NextApiResponse) {
   //@ts-ignore
   const access_token = entriesToObj(githubAuthToken)?.['access_token']
 
-  const githubUserInfoRes = await axios.get(`https://api.github.com/user`, {
+  const githubUserInfoRes = await axios.get(`https://api.github.com/user?access_token=${access_token}`, {
     headers: {
       Authorization: 'token ' + access_token
     }
