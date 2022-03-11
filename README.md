@@ -60,10 +60,11 @@ import BlogCommentFrame from 'blog_comment_frame'
   <BlogCommentFrame
     commentDeployUrlHost={'http://xxxx.vercel.app'}
     pageId={articleId}
+    githubAuthClientId={'xxxxx'} // github OAuth application client id
   />
 ```
 
-commentDeployUrlHost 和 pageId、height 的用法可参考 [blog_comment_frame](https://www.npmjs.com/package/blog_comment_frame)
+commentDeployUrlHost 和 pageId、height、githubAuthClientId 的用法可参考 [blog_comment_frame](https://www.npmjs.com/package/blog_comment_frame)
 
 ## issues
 
