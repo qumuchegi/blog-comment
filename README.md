@@ -60,7 +60,6 @@ import BlogCommentFrame from 'blog_comment_frame'
   <BlogCommentFrame
     commentDeployUrlHost={'http://xxxx.vercel.app'}
     pageId={articleId}
-    height={400}
   />
 ```
 

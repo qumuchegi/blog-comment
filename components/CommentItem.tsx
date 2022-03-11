@@ -79,7 +79,7 @@ export default function CommentItem({
   return <div style={{
     // borderLeft: commentInfo?.isReply ? 'solid 1px #eee' : '',
     marginLeft: commentInfo?.isReply ? '40px' : '0px',
-    backgroundColor: commentInfo?.isReply ? '#f7f8fab3' : ''
+    backgroundColor: commentInfo?.isReply ? '#f7f4fab3' : ''
     // borderLeft: commentInfo?.isReply ? 'solid 1px #bbb' : undefined,
     // marginBottom: '0px'
   }} className={styles.body}>
@@ -103,11 +103,11 @@ export default function CommentItem({
           {
             commentInfo?.replyTo &&
             <div>
-              <Image src={'/right-arrow.png'} width={20} height={10} alt='回复'/>
+              <Image src={'/right-arrow1.png'} width={20} height={10} alt='回复'/>
               <span className={styles.userName}>
                 {
                   isReplyToGithubAccount
-                  ? <a href={commentInfo?.replyTo?.replyToAccountId?.url} target='_blank' rel="noreferrer">
+                  ? <a href={commentInfo?.replyTo?.replyToAccountId?.url} target='_blank' rel="noreferrer" style={{textDecoration: 'none', color: 'black'}}>
                     @{commentInfo?.replyTo?.replyToAccountId?.userName}
                   </a>
                   : `@${commentInfo?.replyTo?.replyToAccountId?.userName}`
@@ -121,7 +121,7 @@ export default function CommentItem({
         <div className={styles.footer}>
           <div className={styles.time}>{
             now - commentInfo?.createTime > ONE_DAY
-             ? dayjs(commentInfo?.createTime).format('YYYY/MM/DD')
+             ? dayjs(commentInfo?.createTime).format('YYYY-MM-DD')
              : dayjs(commentInfo?.createTime).fromNow()
           }</div>
           <div style={{
@@ -136,13 +136,15 @@ export default function CommentItem({
                 onClick={isShowReplyInput ? closeReply : onClickReply}
                 style={{fontSize: 12}}
               >
-                {
-                  isShowReplyInput
-                  ? '取消'
-                  : <Image src={'/reply.png'} width={15} height={15} alt='回复'/>
-                }
+                <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+                  {
+                    isShowReplyInput
+                    ? '取消'
+                    : <Image src={'/reply1.png'} width={15} height={15} alt='回复'/>
+                  }
+                  <span style={{marginLeft: '3px'}}>{commentInfo?.replyNumber + newReplyInfo.length}</span>
+                </div>
               </Button>
-              <span>{commentInfo?.replyNumber + newReplyInfo.length}</span>
             </div>
           }
           {
@@ -152,11 +154,13 @@ export default function CommentItem({
                 onClick={likeComment}
                 style={{fontSize: 12}}
               >
-                {
-                  <Image src='/good.png' alt='赞' width='15' height='15'/>
-                }
+                <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+                  {
+                    <Image src='/good.png' alt='赞' width='15' height='15'/>
+                  }
+                  <span style={{marginLeft: '3px'}}>{likeNumber}</span>
+                </div>
               </Button>
-              <span>{likeNumber}</span>
             </div>
           }
           </div>

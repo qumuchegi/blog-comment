@@ -128,11 +128,11 @@ export default function CommentSendInput({
         style={{backgroundColor: 'white'}}
         color="secondary"
       />
-      <div style={{flexGrow: 0}}>
-       <Button onClick={_onSend} style={{flex:1}} color="secondary">
+      {/* <div> */}
+       <Button onClick={_onSend} style={{height: '100%'}} color="secondary">
           发送
         </Button>
-      </div>
+      {/* </div> */}
     </div>
     {
         newCommentInfo
