@@ -81,6 +81,7 @@ const Home = ({
             && auth_token
             && github_userid
           ) {
+            setOpenLoginDialog(false)
             const _loginIdentity = {
               userId: github_userid,
               authPlatform: AuthPlatform.github,

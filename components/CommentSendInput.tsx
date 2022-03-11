@@ -37,7 +37,7 @@ export default function CommentSendInput({
   const [value, setValue] = useState('')
   const [isSendEmptyValue, setIsSendEmptyValue] = useState(false)
   const [isSending, setIsSending] = useState(false)
-  const [newCommentInfo, setNewCommentInfo] = useState<CommentInfoRes['comments'][0]>()
+  const [newCommentInfo, setNewCommentInfo] = useState<CommentInfoRes['comments']>([])
   const onInputChange: React.ChangeEventHandler<HTMLTextAreaElement> = useCallback((e) => {
     setValue(e.target.value)
   }, [])
@@ -92,7 +92,7 @@ export default function CommentSendInput({
       setIsSending(true)
       //@ts-ignore
       const res = await request(params)
-      setNewCommentInfo(res.newComment)
+      setNewCommentInfo(pre => [res.newComment, ...pre])
       onSuccess?.(res.newComment)
       setValue('')
     } catch (err) {
@@ -129,15 +129,16 @@ export default function CommentSendInput({
       {/* </div> */}
     </div>
     {
-        newCommentInfo
-        && <div className={styles.newComment}>
+        newCommentInfo.map(
+          info => <div className={styles.newComment} key={info.id}>
           <CommentItem
-            commentInfo={newCommentInfo}
+            commentInfo={info}
             articleId={articleId}
             hideInteract={true}
             beforeInteract={beforeInteract}
           />
         </div>
+        )
       }
   </div>
 }
