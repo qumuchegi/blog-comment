@@ -40,7 +40,7 @@
 ，在 vercel 上面新增两个 环境变量，名字分别为 github_auth_secret 和 github_auth_clientid，值分别设置为 Client secrets 和 Client ID
  的值)，
 
- <img src='./assets/1.png' width='300' style="margin-left: 100px"/>
+ <img src='./assets/1.png' width='500' style="margin-left: 100px"/>
 
 5. 在 vercel 上面 deploy 即可部署完成
 6. 安装 [blog_comment_frame](https://www.npmjs.com/package/blog_comment_frame), 

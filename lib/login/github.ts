@@ -42,9 +42,9 @@ export default function openGithubAuth(callbackUrl?: string) {
     '*'
   )
 
-  // const url = `https://github.com/login/oauth/authorize?client_id=${github_auth_clientid}`
-  //   + `&redirect_uri=${`${HOST}/api/githubLoginCallback?redirect_url=` + callbackUrl}`
-  // window.location.href = url
-    // HOST + '/api/proxyIframeResponse?targetUrl='
-    //   + encodeURIComponent(url)
+  const url = `https://github.com/login/oauth/authorize?client_id=${github_auth_clientid}`
+    + `&redirect_uri=${`${HOST}/api/githubLoginCallback?redirect_url=` + (callbackUrl || window.location.href)}`
+  window.location.href = url
+    HOST + '/api/proxyIframeResponse?targetUrl='
+      + encodeURIComponent(url)
 }

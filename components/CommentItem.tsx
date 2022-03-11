@@ -77,7 +77,9 @@ export default function CommentItem({
     }
   }, [commentInfo?.commenter?.url, isCommenterGithubAccount])
   return <div style={{
-    paddingLeft: commentInfo?.isReply ? '40px' : '0px',
+    // borderLeft: commentInfo?.isReply ? 'solid 1px #eee' : '',
+    marginLeft: commentInfo?.isReply ? '40px' : '0px',
+    backgroundColor: commentInfo?.isReply ? '#f7f8fab3' : ''
     // borderLeft: commentInfo?.isReply ? 'solid 1px #bbb' : undefined,
     // marginBottom: '0px'
   }} className={styles.body}>
@@ -119,14 +121,20 @@ export default function CommentItem({
         <div className={styles.footer}>
           <div className={styles.time}>{
             now - commentInfo?.createTime > ONE_DAY
-             ? dayjs(commentInfo?.createTime).format('YYYY/MM/DD/')
+             ? dayjs(commentInfo?.createTime).format('YYYY/MM/DD')
              : dayjs(commentInfo?.createTime).fromNow()
           }</div>
+          <div style={{
+            display: 'flex',
+            justifyContent: 'flex-start',
+            alignItems: 'center',
+            flex: 2
+          }}>
           {
             !hideInteract && <div className={styles.like}>
               <Button
                 onClick={isShowReplyInput ? closeReply : onClickReply}
-                // height={30}
+                style={{fontSize: 12}}
               >
                 {
                   isShowReplyInput
@@ -134,7 +142,7 @@ export default function CommentItem({
                   : <Image src={'/reply.png'} width={15} height={15} alt='回复'/>
                 }
               </Button>
-              <span>{commentInfo?.replyNumber}</span>
+              <span>{commentInfo?.replyNumber + newReplyInfo.length}</span>
             </div>
           }
           {
@@ -142,6 +150,7 @@ export default function CommentItem({
             <div className={styles.like}>
               <Button
                 onClick={likeComment}
+                style={{fontSize: 12}}
               >
                 {
                   <Image src='/good.png' alt='赞' width='15' height='15'/>
@@ -150,11 +159,11 @@ export default function CommentItem({
               <span>{likeNumber}</span>
             </div>
           }
+          </div>
         </div>
         {
           isShowReplyInput &&
           <div style={{marginTop: '10px'}}>
-            <hr/>
             <CommentSendInput
               articleId={articleId}
               replyTo={{

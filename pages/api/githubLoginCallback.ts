@@ -3,6 +3,7 @@ import axios from 'axios'
 import catchError from './utils/wrapper/catchError'
 import { entriesToObj } from '../../lib/utils/object'
 import { serialize } from 'cookie'
+import urlParser from 'parse-url'
 
 const GITHUB_AUTH_CONFIG = {
   clientId: process.env.github_auth_clientid,
@@ -25,15 +26,17 @@ async function githubLoginCallback(req: NextApiRequest, res: NextApiResponse) {
     }
   )
   const githubAuthToken = tokenResData.data
-  console.log({
-    githubAuthToken
-  })
+  // console.log({
+  //   githubAuthToken
+  // })
   //@ts-ignore
   const access_token = entriesToObj(githubAuthToken)?.['access_token']
-  console.log({
-    access_token
-  })
-
+  // console.log({
+  //   access_token
+  // })
+  if (!access_token) {
+    res.redirect(301, redirect_url as string)
+  }
   const githubUserInfoRes = await axios.get(`https://api.github.com/user?access_token=${access_token}`, {
     headers: {
       Authorization: 'token ' + access_token
@@ -63,6 +66,11 @@ async function githubLoginCallback(req: NextApiRequest, res: NextApiResponse) {
       value: userInfo.id
     }
   ]
+  const {
+    protocol,
+    resource,
+    search
+  } = urlParser(redirect_url as string)
 
   res.setHeader(
     'Set-Cookie',
@@ -70,10 +78,28 @@ async function githubLoginCallback(req: NextApiRequest, res: NextApiResponse) {
       return serialize(key, value, {path: '/'})
     })
   )
-  console.log({
-    redirect_url
-  })
-  res.redirect(301, redirect_url as string)
+  // res.status(200).json({
+  //   code: 0,
+  //   msg: 'success',
+  //   data: {
+  //     redirect_url,
+  //     authInfo: cookies.reduce((obj, { key, value }) => ({
+  //       ...obj,
+  //       [key]: value
+  //     }), {})
+  //   }
+  // })
+  // console.log({
+  //   redirect_url
+  // })
+  const authInfoToQueryString = cookies.map(({key, value}) => {
+    return `${key}=${escape(value)}`
+  }).join('&')
+  const appendAuthInfoToUrl = redirect_url + (search ? `&${authInfoToQueryString}` : `?${authInfoToQueryString}`)
+  console.log(
+    {appendAuthInfoToUrl}
+  )
+  res.redirect(301, appendAuthInfoToUrl as string)
 }
 
 export default catchError(githubLoginCallback)

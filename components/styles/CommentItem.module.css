@@ -1,12 +1,11 @@
 .body {
   /* padding: 10px; */
-  margin-bottom: 10px;
-  border: solid 1px #eee;
-  border-radius: 7px;
+  padding-bottom: 10px;
+  /* border-radius: -7px; */
 }
-.body:hover {
+/* .body:hover {
   background-color: rgb(243, 255, 254);
-}
+} */
 .header {
   padding: 5px;
   display: flex;
@@ -26,7 +25,7 @@
 }
 .footer {
   display: flex;
-  justify-content: flex-start;
+  justify-content: space-between;
   align-items: center;
   margin-top: 10px;
 }
@@ -37,6 +36,7 @@
   color: #aaa;
   font-size: 0.7rem;
   padding-left: 40px;
+  flex: 1;
 }
 .footer>.like{
   display: flex;

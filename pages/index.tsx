@@ -13,6 +13,7 @@ const Home = ({
 }) => {
   const [openLoginDialog, setOpenLoginDialog] = useState(false)
   const [loginIdentity, setLoginIdentity] = useState<LoginIdentity>()
+
   const clusterId = articleId || '4edd40c86762e0fb12000003'
   const onLoginSuccess = useCallback((authType) => {
     if (authType === AuthPlatform.anonymous) {
@@ -22,13 +23,25 @@ const Home = ({
         userName: '匿名',
         avatar: '/anonymous_avatar.png'
       })
+    } else {
+      setLoginIdentity({
+        userId: '',
+        authPlatform: AuthPlatform.anonymous,
+        userName: '匿名',
+        avatar: '/anonymous_avatar.png'
+      })
     }
   } ,[])
   const onLoginFailed = useCallback(() => {
-
+    setLoginIdentity({
+      userId: '',
+      authPlatform: AuthPlatform.anonymous,
+      userName: '匿名',
+      avatar: '/anonymous_avatar.png'
+    })
   } ,[])
-  const ensureLogin = useCallback(
-    (loginedCallback) => {
+
+  const ensureLogin = useCallback((loginedCallback: any) => {
       // console.log({
       //   loginedCallback,
       //   loginIdentity
@@ -42,56 +55,65 @@ const Home = ({
   }, [loginIdentity])
 
   useEffect(() => {
-    const {
-      userHomeUrl,
-      auth_username,
-      auth_avatar,
-      auth_token,
-      github_userid
-    } = entriesToObj<{
-      userHomeUrl: string,
-      auth_username: string,
-      auth_avatar: string,
-      auth_token: string,
-      github_userid: string
-    }>(document.cookie, ';', (value) => window.decodeURIComponent(value))
-    if (
-      userHomeUrl
-      && auth_username
-      && auth_avatar
-      && auth_token
-      && github_userid
-    ) {
-      setLoginIdentity({
-        userId: github_userid,
-        authPlatform: AuthPlatform.github,
-        userName: auth_username,
-        avatar: auth_avatar,
-        url: userHomeUrl,
-        token: auth_token
-      })
-      cacheGithubAuthInfo({
-        userId: github_userid,
-        username: auth_username,
-        avatar: auth_avatar,
-        userHomeUrl: userHomeUrl,
-        token: auth_token
-      })
-    } else {
-    }
+    const INIT_IFRAME_MSG = 'iframe_init_msg'
+    window.parent?.postMessage(
+      JSON.stringify({
+        msg: INIT_IFRAME_MSG
+      }),
+      "*"
+    )
   }, [])
 
   useEffect(() => {
-    const INIT_IFRAME_MSG = 'iframe_init_msg'
-    // document.addEventListener('DOMContentLoaded', () => {
-    //   console.log('DOM fully loaded and parsed'); // 译者注："DOM完全加载以及解析"
-      window.parent?.postMessage(
-        JSON.stringify({
-          msg: INIT_IFRAME_MSG
-        }),
-        "*"
-      )
-    // })
+    window.addEventListener('message', (evt) => {
+      try{
+        const data = JSON.parse(evt.data)
+        if ((data.msg === 'forward-github-auth-info')) {
+          const {
+            userHomeUrl,
+            auth_username,
+            auth_avatar,
+            auth_token,
+            github_userid
+          } = data.data
+          // console.log('forward-github-auth-info', {
+          //   userHomeUrl,
+          //   auth_username,
+          //   auth_avatar,
+          //   auth_token,
+          //   github_userid
+          // })
+          if (
+            userHomeUrl
+            && auth_username
+            && auth_avatar
+            && auth_token
+            && github_userid
+          ) {
+            const _loginIdentity = {
+              userId: github_userid,
+              authPlatform: AuthPlatform.github,
+              userName: auth_username,
+              avatar: auth_avatar,
+              url: userHomeUrl,
+              token: auth_token
+            }
+            setLoginIdentity(_loginIdentity)
+            cacheGithubAuthInfo({
+              userId: github_userid,
+              username: auth_username,
+              avatar: auth_avatar,
+              userHomeUrl: userHomeUrl,
+              token: auth_token
+            })
+          } else {
+          }
+        }
+      } catch (err) {
+
+      }
+    }, false)
+
   }, [])
 
   return (<div

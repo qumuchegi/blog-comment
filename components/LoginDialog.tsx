@@ -76,31 +76,7 @@ export default function LoginDialog(
     // github
     if (selectedPlatform === AuthPlatform.github) {
       try {
-        await openGithubAuth(
-          //window.location.href//.replace('https', 'http')
-        )
-        const {
-          userHomeUrl,
-          auth_username,
-          auth_avatar,
-          auth_token,
-          github_userid
-        } = entriesToObj<{
-          userHomeUrl: string,
-          auth_username: string,
-          auth_avatar: string,
-          auth_token: string,
-          github_userid: string
-        }>(document.cookie, ';', (value) => window.decodeURIComponent(value))
-        //ts-ignoew
-        cacheGithubAuthInfo({
-          userId: github_userid,
-          userHomeUrl,
-          username: auth_username,
-          avatar: auth_avatar,
-          token: auth_token
-        })
-        onLoginSuccess(AuthPlatform.github)
+        await openGithubAuth()
       } catch(err) {
         console.error(err)
       }

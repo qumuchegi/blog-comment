@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useMemo } from 'react'
+import React, { useCallback, useState, useMemo, useEffect } from 'react'
 import postComment from '../lib/network/postComment'
 import postReply, { Params as PostReplyParams } from '../lib/network/postReply'
 // import Button from './Button'
@@ -100,7 +100,8 @@ export default function CommentSendInput({
       onFailed?.()
     }
     setIsSending(false)
-  })), [articleId, beforeInteract, onFailed, onSuccess, replyTo, value]) 
+  })), [articleId, beforeInteract, onFailed, onSuccess, replyTo, value])
+
   return <div>
     <Backdrop
       sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
@@ -124,6 +125,7 @@ export default function CommentSendInput({
         value={value}
         onChange={onInputChange}
         multiline
+        style={{backgroundColor: 'white'}}
         color="secondary"
       />
       <div style={{flexGrow: 0}}>
