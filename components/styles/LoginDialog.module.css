@@ -9,6 +9,8 @@
 .dialogBody {
   width: 200px;
   height: 300px;
+  margin: auto;
+  background-color: white;
   display: flex;
   flex-direction: column;
   justify-content: space-around;

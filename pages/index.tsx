@@ -1,4 +1,5 @@
 import CommentSendInput from '../components/CommentSendInput'
+import dynamic from 'next/dynamic'
 import CommentList from '../components/CommentList'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { GetServerSideProps } from 'next'
@@ -11,7 +12,7 @@ const Home = ({
 }: {
   articleId: string
 }) => {
-  const [openLoginDialog, setOpenLoginDialog] = useState(false)
+  const [openLoginDialog, setOpenLoginDialog] = useState(true)
   const [loginIdentity, setLoginIdentity] = useState<LoginIdentity>()
 
   const clusterId = articleId || '4edd40c86762e0fb12000003'
@@ -42,10 +43,7 @@ const Home = ({
   } ,[])
 
   const ensureLogin = useCallback((loginedCallback: any) => {
-      // console.log({
-      //   loginedCallback,
-      //   loginIdentity
-      // })
+      // sendHeight()
       if (!loginIdentity) {
         return () => {
           setOpenLoginDialog(true)
@@ -76,13 +74,6 @@ const Home = ({
             auth_token,
             github_userid
           } = data.data
-          // console.log('forward-github-auth-info', {
-          //   userHomeUrl,
-          //   auth_username,
-          //   auth_avatar,
-          //   auth_token,
-          //   github_userid
-          // })
           if (
             userHomeUrl
             && auth_username
@@ -116,39 +107,52 @@ const Home = ({
 
   }, [])
 
+  const sendHeight = useCallback(() => {
+    window.parent?.postMessage(
+      JSON.stringify({
+        msg: 'send_iframe_height',
+        data: {
+          height: document.getElementById('commentBodyId')?.scrollHeight
+        }
+      }),
+      "*"
+    )
+  }, [])
+
   return (<div
     id='commentBodyId'
     style={{
       flex: 1
     }}>
-    <LoginDialog
-      openLoginDialog={openLoginDialog}
-      onRequestCLose={useCallback(() => {
-        setOpenLoginDialog(false)
-      }, [])}
-      onLoginSuccess={onLoginSuccess}
-      onLoginFailed={onLoginFailed}
-    />
+      <LoginDialog
+        openLoginDialog={openLoginDialog}
+        onRequestCLose={useCallback(() => {
+          setOpenLoginDialog(false)
+        }, [])}
+        onLoginSuccess={onLoginSuccess}
+        onLoginFailed={onLoginFailed}
+      />
     <div style={{
-      position: 'sticky',
-      zIndex: 10,
       backgroundColor: '#fff',
       padding: '10px 10px 0 10px',
-      top: '0',
-      flexGrow: 1
+      flexGrow: 1,
+      height: openLoginDialog ? '0px' : ''
     }}>
       <CommentSendInput
         articleId={clusterId}
         beforeInteract={ensureLogin}
+        onSuccess={sendHeight}
       /> 
     </div>
     <div style={{
-      padding: '10px'
+      padding: '10px',
+      height: openLoginDialog ? '0px' : ''
     }}>
       <CommentList
         clusterId={clusterId}
         offset={0}
         beforeInteract={ensureLogin}
+        onDataLoadSuccess={sendHeight}
       />
     </div>
   </div>)

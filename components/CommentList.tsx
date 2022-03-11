@@ -1,13 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import getCommentIds, { ResData as CommentIds  } from '../lib/network/getCommentIds'
-import {useFetchData} from '../lib/cache/useData'
 import CommentItem from './CommentItem'
 import getCommentInfoById, { ResData as CommentInfoRes } from '../lib/network/getCommentInfoById'
 import CircularProgress from '@mui/material/CircularProgress'
-import Box from '@mui/material/Box'
 
 const LIMIT = 10
-function CommentListWithData({
+export default function CommentList({
   clusterId,
   offset = 0,
   beforeInteract,
@@ -63,7 +61,7 @@ function CommentListWithData({
   }, [])
 
   // query comment and reply details by id
-const fetch = useCallback( async () => {
+  const fetch = useCallback( async () => {
     const commentIds = await fetchComments()
     try {
       let flatIds: string[] = []
@@ -83,12 +81,13 @@ const fetch = useCallback( async () => {
       console.error({err});
       setCommentInfos( [] )
     }
-  }, [fetchComments, markTopCommentTopCommentInfos])
+    onDataLoadSuccess?.()
+  }, [fetchComments, markTopCommentTopCommentInfos, onDataLoadSuccess])
 
   useEffect(() => {
     fetch()
   }, [fetch])
-  // console.log({commentInfos});
+
   return <div>
     <div style={{ display: 'flex', flex: 1, justifyContent: 'center'}}>
       {
@@ -103,27 +102,10 @@ const fetch = useCallback( async () => {
           articleId={clusterId}
           topCommentId={info?.topCommentId}
           beforeInteract={beforeInteract}
+          onSendReply={onDataLoadSuccess}
         />
       </div>
       )
     }
   </div>
-}
-
-export default function CommentList(
-  {
-    clusterId,
-    offset = 0,
-    beforeInteract
-  }: {
-    clusterId: string,
-    offset?: number,
-    beforeInteract: <T>(hadLoginCallback: T) => T
-  }
-) {
-  return <CommentListWithData
-    clusterId={clusterId}
-    offset={offset}
-    beforeInteract={beforeInteract}
-  />
 }

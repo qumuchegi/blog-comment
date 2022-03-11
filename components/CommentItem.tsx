@@ -21,36 +21,36 @@ export default function CommentItem({
   commentInfo,
   topCommentId,
   hideInteract,
-  beforeInteract
+  beforeInteract,
+  onSendReply
 }: {
   articleId: string,
   commentInfo: CommentInfoRes['comments'][0],
   topCommentId?: string,
   hideInteract?: boolean,
-  beforeInteract: <T>(hadLoginCallback: T) => T
+  beforeInteract: <T>(hadLoginCallback: T) => T,
+  onSendReply?: () => void
 }) {
   const [isShowReplyInput, setIsShowReplyInput] = useState(false)
-  const [isShowLikedWarn, setIsShowLikedWarn] = useState(false)
+  const [isShowLiked, setIsShowLiked] = useState(false)
   const [likeNumber, setLikeNumber] = useState(commentInfo?.likeNumber ?? 0)
   const [newReplyInfo, setNewReplyInfo] = useState<CommentInfoRes['comments']>([])
-  const isLiked = useRef(false)
+
   const onClickReply = () => {
     setIsShowReplyInput(true)
+    onSendReply?.()
   }
   const onSendReplySuccess = (newReply: CommentInfoRes['comments'][0]) => {
     setIsShowReplyInput(false)
     setNewReplyInfo(pre => [newReply, ...pre])
+    onSendReply?.()
   }
   const closeReply = () => {
     setIsShowReplyInput(false)
   }
   const likeComment = useMemo(() => beforeInteract((
     async () => {
-      if (isLiked.current) {
-        setIsShowLikedWarn(true)
-        setTimeout(() => {
-          setIsShowLikedWarn(false)
-        }, 2000)
+      if (isShowLiked) {
         return
       }
       try {
@@ -58,12 +58,12 @@ export default function CommentItem({
           commentId: commentInfo?.id
         })
         setLikeNumber(pre => pre+1)
-        isLiked.current = true
+        setIsShowLiked(true)
       } catch (err) {
         alert('点赞失败！')
       }
     }
-  )), [beforeInteract, commentInfo?.id])
+  )), [beforeInteract, commentInfo?.id, isShowLiked])
   const isCommenterGithubAccount = useMemo(() => {
     return commentInfo?.commenter?.accountType === 1
   }, [commentInfo])
@@ -83,13 +83,6 @@ export default function CommentItem({
     // borderLeft: commentInfo?.isReply ? 'solid 1px #bbb' : undefined,
     // marginBottom: '0px'
   }} className={styles.body}>
-    <Snackbar
-      anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-      open={isShowLikedWarn}
-      // onClose={handleClose}
-      message="你已经赞过了"
-      // key={vertical + horizontal}
-    />
     {
       commentInfo
       && <div>
@@ -158,7 +151,7 @@ export default function CommentItem({
                   {
                     <Image src='/good.png' alt='赞' width='15' height='15'/>
                   }
-                  <span style={{marginLeft: '3px'}}>{likeNumber}</span>
+                  <span style={{marginLeft: '3px', color: isShowLiked ? 'red' : '#aaa'}}>{likeNumber}</span>
                 </div>
               </Button>
             </div>

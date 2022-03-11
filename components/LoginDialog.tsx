@@ -1,14 +1,12 @@
 import React, { useState, useCallback } from 'react'
 import Select, { SelectChangeEvent } from '@mui/material/Select'
 import MenuItem from '@mui/material/MenuItem'
-import { Menu } from '@mui/material'
-import DialogTitle from '@mui/material/DialogTitle'
-import Dialog from '@mui/material/Dialog'
 import Image from 'next/image' 
 import Button from '@mui/material/Button'
 import styles from './styles/LoginDialog.module.css'
 import openGithubAuth, { cacheGithubAuthInfo } from '../lib/login/github'
 import { entriesToObj } from '../lib/utils/object'
+import Modal from '@mui/material/Modal';
 
 export enum AuthPlatform {
   anonymous = 'anonymous', // 匿名
@@ -85,13 +83,27 @@ export default function LoginDialog(
     }
     setIsLoginLoading(false)
   } ,[handleCloseLoginDialog, onLoginSuccess, selectedPlatform])
+
+  if (!openLoginDialog) {
+    return null
+  }
   return <div>
-    <Dialog
+    <Modal
+      open={openLoginDialog}
+      // onClose={handleCloseLoginDialog}
+      aria-labelledby="modal-modal-title"
+      aria-describedby="modal-modal-description"
+      closeAfterTransition
+      BackdropProps={{
+        timeout: 500
+      }}
+    >
+    {/* <Dialog
       onClose={handleCloseLoginDialog}
       open={openLoginDialog}
-    >
+    > */}
     <div className={styles.dialogBody}>
-      <DialogTitle>选择评论身份</DialogTitle>
+      <h3>选择参与评论身份</h3>
         <Select label='评论身份' onChange={onSelectPlatform} value={selectedPlatform}>
           {
             IDENTITIES.map(({
@@ -108,6 +120,7 @@ export default function LoginDialog(
         </Select>
         <Button variant="contained" onClick={login}>登录</Button>
       </div>
-    </Dialog>
+    {/* </Dialog> */}
+    </Modal>
   </div>
 }

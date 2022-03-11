@@ -42,11 +42,10 @@ export default function CommentSendInput({
     setValue(e.target.value)
   }, [])
   const _onSend = useMemo(() => beforeInteract((async () => {
-    console.log('_onSend')
     if (!articleId || !value) {
       setIsSendEmptyValue(true)
       setTimeout(() => {
-      setIsSendEmptyValue(false)
+        setIsSendEmptyValue(false)
       }, 2000)
       return
     }
@@ -110,23 +109,18 @@ export default function CommentSendInput({
     >
       <CircularProgress color="inherit" />
     </Backdrop>
-    <Snackbar
-      anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-      open={isSendEmptyValue}
-      // onClose={handleClose}
-      message="请输入消息"
-      // key={vertical + horizontal}
-    />
     <div className={styles.container}>
       <TextField
         fullWidth
-        label={replyTo ? `回复 @${replyTo.toAccountName}` : '评论'}
+        // color='warning'
+        variant="standard"
+        color={'primary'}
+        label={replyTo ? `回复 @${replyTo.toAccountName}` : '输入评论 ...'}
         id="fullWidth"
         value={value}
         onChange={onInputChange}
         multiline
-        style={{backgroundColor: 'white'}}
-        color="secondary"
+        style={{backgroundColor: isSendEmptyValue ? 'rgba(235, 173, 173, 0.2)' : '#fff'}}
       />
       {/* <div> */}
        <Button onClick={_onSend} style={{height: '100%'}} color="secondary">
