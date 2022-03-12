@@ -136,8 +136,7 @@ const Home = ({
     <div style={{
       backgroundColor: '#fff',
       padding: '10px 10px 0 10px',
-      flexGrow: 1,
-      height: openLoginDialog ? '0px' : ''
+      flexGrow: 1
     }}>
       <CommentSendInput
         articleId={clusterId}
@@ -146,8 +145,7 @@ const Home = ({
       /> 
     </div>
     <div style={{
-      padding: '10px',
-      height: openLoginDialog ? '0px' : ''
+      padding: '10px'
     }}>
       <CommentList
         clusterId={clusterId}
