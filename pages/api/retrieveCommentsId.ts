@@ -27,8 +27,11 @@ async function retrieveCommentsId(req: NextApiRequest, res: NextApiResponse) {
     })
   }
   const allCommentsId = clusterDocument.comments.filter(i => i.isTopComment).map(i => i.id)
-  // @ts-ignore
-  const topCommentIds = limit ? allCommentsId.slice(offset, limit + offset) : allCommentsId.slice(offset)
+  const topCommentIds = limit
+    // @ts-ignore
+    ? allCommentsId.slice(offset, limit + offset)
+    // @ts-ignore
+    : allCommentsId.slice(offset)
   // console.log({clusterDocument: clusterDocument.comments})
   // 插入 reply id
   // let allComments = []

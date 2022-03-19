@@ -22,14 +22,16 @@ export default function CommentItem({
   topCommentId,
   hideInteract,
   beforeInteract,
-  onSendReply
+  onSendReply,
+  toggleIdentity
 }: {
   articleId: string,
   commentInfo: CommentInfoRes['comments'][0],
   topCommentId?: string,
   hideInteract?: boolean,
   beforeInteract: <T>(hadLoginCallback: T) => T,
-  onSendReply?: () => void
+  onSendReply?: () => void,
+  toggleIdentity?: () => void
 }) {
   const [isShowReplyInput, setIsShowReplyInput] = useState(false)
   const [isShowLiked, setIsShowLiked] = useState(false)
@@ -129,7 +131,7 @@ export default function CommentItem({
                 onClick={isShowReplyInput ? closeReply : onClickReply}
                 style={{fontSize: 12}}
               >
-                <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+                <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', color: 'black'}}>
                   {
                     isShowReplyInput
                     ? '取消'
@@ -172,6 +174,7 @@ export default function CommentItem({
               }}
               onSuccess={onSendReplySuccess}
               beforeInteract={beforeInteract}
+              toggleIdentity={toggleIdentity}
             /> 
           </div>
         }

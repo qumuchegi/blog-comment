@@ -11,11 +11,11 @@ const GITHUB_AUTH_CONFIG = {
 }
 async function githubLoginCallback(req: NextApiRequest, res: NextApiResponse) {
   const {code: githubAuthCode, redirect_url} = req.query
-  console.log(
-    'githubLoginCallback',
-    {
-    githubAuthCode, redirect_url
-  })
+  // console.log(
+  //   'githubLoginCallback',
+  //   {
+  //   githubAuthCode, redirect_url
+  // })
   
   const tokenResData = await axios.post(
     'https://github.com/login/oauth/access_token',
@@ -53,10 +53,10 @@ async function githubLoginCallback(req: NextApiRequest, res: NextApiResponse) {
       key: 'auth_avatar',
       value: userInfo.avatar_url
     }, 
-    {
-      key: 'auth_token',
-      value: githubAuthToken
-    },
+    // {
+    //   key: 'auth_token',
+    //   value: githubAuthToken
+    // },
     {
       key: 'userHomeUrl',
       value: userInfo.html_url
@@ -95,10 +95,8 @@ async function githubLoginCallback(req: NextApiRequest, res: NextApiResponse) {
   const authInfoToQueryString = cookies.map(({key, value}) => {
     return `${key}=${escape(value)}`
   }).join('&')
+
   const appendAuthInfoToUrl = redirect_url + (search ? `&${authInfoToQueryString}` : `?${authInfoToQueryString}`)
-  console.log(
-    {appendAuthInfoToUrl}
-  )
   res.redirect(301, appendAuthInfoToUrl as string)
 }
 

@@ -7,6 +7,12 @@ import LoginDialog, { LoginIdentity, AuthPlatform } from '../components/LoginDia
 import { entriesToObj } from '../lib/utils/object'
 import { cacheGithubAuthInfo } from '../lib/login/github'
 
+const ANONYMOUS_ACCOUNT = {
+  userId: '',
+  authPlatform: AuthPlatform.anonymous,
+  userName: '匿名',
+  avatar: '/anonymous_avatar.png'
+}
 const Home = ({
   articleId
 }: {
@@ -18,28 +24,18 @@ const Home = ({
   const clusterId = articleId || '4edd40c86762e0fb12000003'
   const onLoginSuccess = useCallback((authType) => {
     if (authType === AuthPlatform.anonymous) {
-      setLoginIdentity({
-        userId: '',
-        authPlatform: AuthPlatform.anonymous,
-        userName: '匿名',
-        avatar: '/anonymous_avatar.png'
-      })
+      setLoginIdentity(ANONYMOUS_ACCOUNT)
     } else {
-      setLoginIdentity({
-        userId: '',
-        authPlatform: AuthPlatform.anonymous,
-        userName: '匿名',
-        avatar: '/anonymous_avatar.png'
-      })
+      // setLoginIdentity({
+      //   userId: '',
+      //   authPlatform: AuthPlatform.anonymous,
+      //   userName: '匿名',
+      //   avatar: '/anonymous_avatar.png'
+      // })
     }
   } ,[])
   const onLoginFailed = useCallback(() => {
-    setLoginIdentity({
-      userId: '',
-      authPlatform: AuthPlatform.anonymous,
-      userName: '匿名',
-      avatar: '/anonymous_avatar.png'
-    })
+    setLoginIdentity(ANONYMOUS_ACCOUNT)
   } ,[])
 
   const ensureLogin = useCallback((loginedCallback: any) => {
@@ -120,6 +116,10 @@ const Home = ({
     )
   }, [])
 
+  const showLoginDialog = useCallback(() => {
+    setOpenLoginDialog(true)
+  }, [])
+
   return (<div
     id='commentBodyId'
     style={{
@@ -141,6 +141,7 @@ const Home = ({
       <CommentSendInput
         articleId={clusterId}
         beforeInteract={ensureLogin}
+        toggleIdentity={showLoginDialog}
         onSuccess={sendHeight}
       /> 
     </div>
@@ -152,6 +153,7 @@ const Home = ({
         offset={0}
         beforeInteract={ensureLogin}
         onDataLoadSuccess={sendHeight}
+        toggleIdentity={showLoginDialog}
       />
     </div>
   </div>)

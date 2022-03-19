@@ -11,6 +11,7 @@ import { ResData as CommentInfoRes } from '../lib/network/getCommentInfoById'
 import TextField from '@mui/material/TextField'
 import Snackbar from '@mui/material/Snackbar'
 import { getCachedGithubAuthInfo } from '../lib/login/github'
+import Avatar from './Avatar'
 
 interface Props {
   articleId: string
@@ -25,6 +26,7 @@ interface Props {
     toCommentId: string,
     topCommentId?: string // 回复的回复的时候，带上顶级评论的 ID
   }
+  toggleIdentity?: () => void
 }
 export default function CommentSendInput({
   articleId,
@@ -32,7 +34,8 @@ export default function CommentSendInput({
   beforeInteract,
   onSuccess,
   onFailed,
-  replyTo
+  replyTo,
+  toggleIdentity
 }: Props) {
   const [value, setValue] = useState('')
   const [isSendEmptyValue, setIsSendEmptyValue] = useState(false)
@@ -41,6 +44,7 @@ export default function CommentSendInput({
   const onInputChange: React.ChangeEventHandler<HTMLTextAreaElement> = useCallback((e) => {
     setValue(e.target.value)
   }, [])
+  const maybeLoginedGithubInfo = useMemo(() => getCachedGithubAuthInfo(), [])
   const _onSend = useMemo(() => beforeInteract((async () => {
     if (!articleId || !value) {
       setIsSendEmptyValue(true)
@@ -49,7 +53,7 @@ export default function CommentSendInput({
       }, 2000)
       return
     }
-    const maybeLoginedGithubInfo = getCachedGithubAuthInfo()
+    
     let commenter
     if (maybeLoginedGithubInfo) {
       commenter = {
@@ -71,7 +75,6 @@ export default function CommentSendInput({
     let params = {
       clusterId: articleId,
       content: value,
-      // TODO: 暂时用匿名账号发送评论
       commenter
     }
     let request
@@ -99,7 +102,11 @@ export default function CommentSendInput({
       onFailed?.()
     }
     setIsSending(false)
-  })), [articleId, beforeInteract, onFailed, onSuccess, replyTo, value])
+  })), [articleId, beforeInteract, maybeLoginedGithubInfo, onFailed, onSuccess, replyTo, value])
+
+  const toggleLoginIdentity = useCallback(() => {
+    toggleIdentity?.()
+  }, [toggleIdentity])
 
   return <div>
     <Backdrop
@@ -110,6 +117,13 @@ export default function CommentSendInput({
       <CircularProgress color="inherit" />
     </Backdrop>
     <div className={styles.container}>
+      <div style={{marginRight: 20, marginLeft: 5}}>
+        <Avatar
+          avatarUrl={maybeLoginedGithubInfo?.avatar || '/anonymous_avatar.png'}
+          onClick={toggleLoginIdentity}
+          badgeImgUrl={'/double-arrow.png'}
+          />
+      </div>
       <TextField
         fullWidth
         // color='warning'
@@ -123,7 +137,7 @@ export default function CommentSendInput({
         style={{backgroundColor: isSendEmptyValue ? 'rgba(235, 173, 173, 0.2)' : '#fff'}}
       />
       {/* <div> */}
-       <Button onClick={_onSend} style={{height: '100%'}} color="secondary">
+       <Button onClick={_onSend} style={{height: '100%', color: 'black'}}>
           发送
         </Button>
       {/* </div> */}

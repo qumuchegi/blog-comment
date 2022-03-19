@@ -69,6 +69,7 @@ export default function LoginDialog(
     setIsLoginLoading(true)
     if (selectedPlatform === AuthPlatform.anonymous) {
       onLoginSuccess(AuthPlatform.anonymous)
+      setIsLoginLoading(false)
       return handleCloseLoginDialog()
     }
     // github
@@ -118,7 +119,17 @@ export default function LoginDialog(
             </MenuItem>)
           }
         </Select>
-        <Button variant="contained" onClick={login}>登录</Button>
+        <Button
+          variant="contained"
+          onClick={login}
+          style={{backgroundColor: 'black'}}
+        >
+          {
+            isLoginLoading
+            ? '正在登录...'
+            : '登录'
+          }
+        </Button>
       </div>
     {/* </Dialog> */}
     </Modal>

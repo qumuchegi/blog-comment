@@ -9,12 +9,14 @@ export default function CommentList({
   clusterId,
   offset = 0,
   beforeInteract,
-  onDataLoadSuccess
+  onDataLoadSuccess,
+  toggleIdentity
 }: {
   clusterId: string,
   offset?: number,
   beforeInteract: <T>(hadLoginCallback: T) => T,
   onDataLoadSuccess?: () => void
+  toggleIdentity?: () => void
 }) {
   const [isLoading, setIsLoading] = useState(true)
   const [commentInfos, setCommentInfos] = useState<(CommentInfoRes['comments'][0] & {topCommentId?: string})[]>([])
@@ -103,6 +105,7 @@ export default function CommentList({
           topCommentId={info?.topCommentId}
           beforeInteract={beforeInteract}
           onSendReply={onDataLoadSuccess}
+          toggleIdentity={toggleIdentity}
         />
       </div>
       )

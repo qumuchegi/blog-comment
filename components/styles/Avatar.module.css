@@ -1,24 +1,27 @@
 .container {
   position: relative;
   /* background-color: red; */
-  width: 40px;
-  height: 40px;
+  width: 30px;
+  height: 30px;
   display: flex;
   justify-content: center;
   align-items: center;
 }
+.container:hover {
+  cursor: pointer;
+}
 .mainAvatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 40px;
+  width: 30px;
+  height: 30px;
+  border-radius: 30px;
 }
 .badgeImg {
   position: absolute;
   bottom: 0px;
   right: -5px;
-  width: 20px;
-  height: 20px;
-  border-radius: 20px;
+  width: 10px;
+  height: 10px;
+  border-radius: 10px;
   background-color: white;
   border: solid 2px white;
 }
