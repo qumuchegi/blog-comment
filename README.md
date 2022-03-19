@@ -5,7 +5,7 @@
 
 这是一个评论组件, 由 vercel/Next.js 托管, mongoDB 作为数据库，可以嵌入任意的 web 页面
 
-[文档]()
+[文档](https://blog-comment-doc-site.vercel.app/)
 
 
 <a href='https://reactjs.org/versions'>
@@ -29,11 +29,7 @@
 
 - [x] 基本的评论和回复、点赞功能 (已支持)
 
-- [x] 支持 github 登录 (已支持)
-
-- [x] 支持 React
-
-- [] 主题定制 (计划中)
+- [x] 支持匿名和 github 登录 (已支持)
 
 - [] 国际化 (计划中)
 
@@ -41,7 +37,7 @@
 
 ## use
 
-[文档]()
+[文档](https://blog-comment-doc-site.vercel.app/)
 
 1. 在 mongoDB 官网申请一个数据库集群，复制数据库连接 URL 备用.
 2. fork 此项目仓库到你的 GitHub 账户.
