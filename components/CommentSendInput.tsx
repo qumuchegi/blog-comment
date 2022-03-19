@@ -8,7 +8,7 @@ import styles from './styles/CommentSendInput.module.css'
 import CommentItem from './CommentItem'
 import { ResData as CommentInfoRes } from '../lib/network/getCommentInfoById'
 import TextField from '@mui/material/TextField'
-import Avatar from './Avatar'
+import Avatar from './AvatarWithBadge'
 import { useStoreState } from './store'
 import { AuthPlatform } from './LoginDialog'
 

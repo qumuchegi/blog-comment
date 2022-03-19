@@ -1,5 +1,5 @@
 import React, { useRef, useState, useCallback, useMemo } from 'react'
-import Avatar from './Avatar'
+import Avatar from './AvatarWithBadge'
 import { ResData as CommentInfoRes } from '../lib/network/getCommentInfoById'
 import postLikeComment from '../lib/network/postLike'
 import CommentSendInput from './CommentSendInput'
