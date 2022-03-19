@@ -95,13 +95,6 @@ const Home = ({
                 // token: auth_token
               }
             )
-            // cacheGithubAuthInfo({
-            //   userId: github_userid,
-            //   username: auth_username,
-            //   avatar: auth_avatar,
-            //   userHomeUrl: userHomeUrl,
-            //   // token: auth_token
-            // })
           } else {
           }
         }
@@ -110,7 +103,7 @@ const Home = ({
       }
     }, false)
 
-  }, [])
+  }, [setGithubAuthInfo])
 
   const sendHeight = useCallback(() => {
     window.parent?.postMessage(

@@ -1,7 +1,6 @@
 import React, { useCallback, useState, useMemo, useEffect } from 'react'
 import postComment from '../lib/network/postComment'
 import postReply, { Params as PostReplyParams } from '../lib/network/postReply'
-// import Button from './Button'
 import Button from '@mui/material/Button'
 import Backdrop from '@mui/material/Backdrop'
 import CircularProgress from '@mui/material/CircularProgress'
@@ -9,10 +8,9 @@ import styles from './styles/CommentSendInput.module.css'
 import CommentItem from './CommentItem'
 import { ResData as CommentInfoRes } from '../lib/network/getCommentInfoById'
 import TextField from '@mui/material/TextField'
-import Snackbar from '@mui/material/Snackbar'
-import { getCachedGithubAuthInfo } from '../lib/login/github'
 import Avatar from './Avatar'
 import { useStoreState } from './store'
+import { AuthPlatform } from './LoginDialog'
 
 interface Props {
   articleId: string
@@ -45,7 +43,10 @@ export default function CommentSendInput({
   const onInputChange: React.ChangeEventHandler<HTMLTextAreaElement> = useCallback((e) => {
     setValue(e.target.value)
   }, [])
-  const maybeLoginedGithubInfo = useStoreState(state => state.githubAuthInfo)
+  const [currentLoginIdentity, maybeLoginedGithubInfo] = useStoreState(state => [
+    state.currentLoginIdentity,
+    state.githubAuthInfo
+  ])
   const _onSend = useMemo(() => beforeInteract((async () => {
     if (!articleId || !value) {
       setIsSendEmptyValue(true)
@@ -56,7 +57,10 @@ export default function CommentSendInput({
     }
     
     let commenter
-    if (maybeLoginedGithubInfo) {
+    if (
+      currentLoginIdentity === AuthPlatform.github
+      && maybeLoginedGithubInfo
+    ) {
       commenter = {
         id: maybeLoginedGithubInfo.userId,
         userName: maybeLoginedGithubInfo.username,
@@ -103,7 +107,7 @@ export default function CommentSendInput({
       onFailed?.()
     }
     setIsSending(false)
-  })), [articleId, beforeInteract, maybeLoginedGithubInfo, onFailed, onSuccess, replyTo, value])
+  })), [articleId, beforeInteract, currentLoginIdentity, maybeLoginedGithubInfo, onFailed, onSuccess, replyTo, value])
 
   const toggleLoginIdentity = useCallback(() => {
     toggleIdentity?.()
@@ -120,7 +124,7 @@ export default function CommentSendInput({
     <div className={styles.container}>
       <div style={{marginRight: 20, marginLeft: 5}}>
         <Avatar
-          avatarUrl={maybeLoginedGithubInfo?.avatar || '/anonymous_avatar.png'}
+          avatarUrl={currentLoginIdentity === AuthPlatform.github ? maybeLoginedGithubInfo?.avatar : '/anonymous_avatar.png'}
           onClick={toggleLoginIdentity}
           badgeImgUrl={'/double-arrow.png'}
           />

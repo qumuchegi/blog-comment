@@ -6,11 +6,11 @@ import Button from '@mui/material/Button'
 import styles from './styles/LoginDialog.module.css'
 import openGithubAuth, { cacheGithubAuthInfo } from '../lib/login/github'
 import Modal from '@mui/material/Modal';
+import { useStoreAction, useStoreState } from './store'
 
 export enum AuthPlatform {
   anonymous = 'anonymous', // 匿名
-  github = 'github',
-  weChat = 'weChat'
+  github = 'github'
 }
 export type LoginIdentity = {
   authPlatform: AuthPlatform,
@@ -56,6 +56,11 @@ export default function LoginDialog(
     onLoginFailed
   } = props
   const [isLoginLoading, setIsLoginLoading] = useState(false)
+  const [currentLoginIdentity, maybeLoginedGithubInfo] = useStoreState(state => [
+    state.currentLoginIdentity,
+    state.githubAuthInfo
+  ])
+  const [toggleLoginIdentity, setGithubAuthInfo] = useStoreAction(actions => [actions.toggleLoginIdentity, actions.setGithubAuthInfo])
   const [selectedPlatform, setSelectedPlatform] = useState<AuthPlatform>(AuthPlatform.anonymous)
   const onSelectPlatform = useCallback((event: SelectChangeEvent) => {
     //@ts-ignore
@@ -73,6 +78,12 @@ export default function LoginDialog(
     }
     // github
     if (selectedPlatform === AuthPlatform.github) {
+      if (maybeLoginedGithubInfo) {
+        onLoginSuccess(AuthPlatform.github)
+        setIsLoginLoading(false)
+        handleCloseLoginDialog()
+        return toggleLoginIdentity(AuthPlatform.github)
+      }
       try {
         await openGithubAuth()
       } catch(err) {
@@ -82,7 +93,7 @@ export default function LoginDialog(
       onLoginSuccess(AuthPlatform.anonymous)
     }
     setIsLoginLoading(false)
-  } ,[handleCloseLoginDialog, onLoginSuccess, selectedPlatform])
+  } ,[handleCloseLoginDialog, maybeLoginedGithubInfo, onLoginSuccess, selectedPlatform, toggleLoginIdentity])
 
   if (!openLoginDialog) {
     return null
