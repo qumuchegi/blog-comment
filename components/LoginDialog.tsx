@@ -5,7 +5,6 @@ import Image from 'next/image'
 import Button from '@mui/material/Button'
 import styles from './styles/LoginDialog.module.css'
 import openGithubAuth, { cacheGithubAuthInfo } from '../lib/login/github'
-import { entriesToObj } from '../lib/utils/object'
 import Modal from '@mui/material/Modal';
 
 export enum AuthPlatform {

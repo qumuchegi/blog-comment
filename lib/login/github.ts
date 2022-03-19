@@ -3,7 +3,7 @@ type GithubAuth = {
   username: string,
   avatar: string,
   userHomeUrl: string,
-  token: string
+  // token: string
 }
 let github_auth_info: GithubAuth
 export const cacheGithubAuthInfo = ({
@@ -11,14 +11,14 @@ export const cacheGithubAuthInfo = ({
   username,
   avatar,
   userHomeUrl,
-  token
+  // token
 }: GithubAuth) => {
   github_auth_info = {
     userId,
     username,
     avatar,
     userHomeUrl,
-    token
+    // token
   }
 }
 export const getCachedGithubAuthInfo = () => {

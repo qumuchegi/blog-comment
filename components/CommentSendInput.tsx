@@ -12,6 +12,7 @@ import TextField from '@mui/material/TextField'
 import Snackbar from '@mui/material/Snackbar'
 import { getCachedGithubAuthInfo } from '../lib/login/github'
 import Avatar from './Avatar'
+import { useStoreState } from './store'
 
 interface Props {
   articleId: string
@@ -44,7 +45,7 @@ export default function CommentSendInput({
   const onInputChange: React.ChangeEventHandler<HTMLTextAreaElement> = useCallback((e) => {
     setValue(e.target.value)
   }, [])
-  const maybeLoginedGithubInfo = useMemo(() => getCachedGithubAuthInfo(), [])
+  const maybeLoginedGithubInfo = useStoreState(state => state.githubAuthInfo)
   const _onSend = useMemo(() => beforeInteract((async () => {
     if (!articleId || !value) {
       setIsSendEmptyValue(true)
