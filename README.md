@@ -1,9 +1,11 @@
-<div>
+<div style="width: 400px; margin: auto; display: flex; justify-content: center; align-items: center">
   <img src='./assets/comment.png' style="width: 200px;height: 200px"/>
   <h1>Blog Comment</h1>
 </div>
 
 这是一个评论组件, 由 vercel/Next.js 托管, mongoDB 作为数据库，可以嵌入任意的 web 页面
+
+[文档]()
 
 
 <a href='https://reactjs.org/versions'>
@@ -22,7 +24,6 @@
   <img src='https://img.shields.io/badge/mongoose-%5E6.2.4-blue'/>
 </a>
 
-<hr/>
 
 ## feature
 
