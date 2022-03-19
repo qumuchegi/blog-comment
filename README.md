@@ -1,4 +1,4 @@
-<div style="width: 400px; margin: auto; display: flex; justify-content: center; align-items: center">
+<div style="width: 400px; margin: auto; display: flex; justify-content: center; align-items: center; flex-direction: column">
   <img src='./assets/comment.png' style="width: 200px;height: 200px"/>
   <h1>Blog Comment</h1>
 </div>
