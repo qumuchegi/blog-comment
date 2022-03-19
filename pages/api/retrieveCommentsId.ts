@@ -12,6 +12,8 @@ async function retrieveCommentsId(req: NextApiRequest, res: NextApiResponse) {
     offset = 0,
     limit
   } = req.query
+  const _offset = Number(offset)
+  const _limit = Number(limit)
   // console.log('retrieveCommentsId', {clusterId})
   const clusterModel = await retrieveClusterModel()
   const commentModel = await retrieveCommentModel()
@@ -27,11 +29,11 @@ async function retrieveCommentsId(req: NextApiRequest, res: NextApiResponse) {
     })
   }
   const allCommentsId = clusterDocument.comments.filter(i => i.isTopComment).map(i => i.id)
-  const topCommentIds = limit
+  const topCommentIds = _limit
     // @ts-ignore
-    ? allCommentsId.slice(offset, limit + offset)
+    ? allCommentsId.slice(_offset, _limit + _offset)
     // @ts-ignore
-    : allCommentsId.slice(offset)
+    : allCommentsId.slice(_offset)
   // console.log({clusterDocument: clusterDocument.comments})
   // 插入 reply id
   // let allComments = []
@@ -55,11 +57,14 @@ async function retrieveCommentsId(req: NextApiRequest, res: NextApiResponse) {
       }
     })
   ))
-  // console.log({allComments, ids})
+
   res.status(200).json({
     code: 0,
     msg: 'success',
-    data: {ids}
+    data: {
+      ids,
+      hasMore: _limit + _offset < allCommentsId.length
+    }
   })
 }
 

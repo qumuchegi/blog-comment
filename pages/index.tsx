@@ -152,7 +152,6 @@ const Home = ({
       }}>
         <CommentList
           clusterId={clusterId}
-          offset={0}
           beforeInteract={ensureLogin}
           onDataLoadSuccess={sendHeight}
           toggleIdentity={showLoginDialog}

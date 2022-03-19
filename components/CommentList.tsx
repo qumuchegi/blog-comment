@@ -1,41 +1,45 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback, useRef } from 'react'
 import getCommentIds, { ResData as CommentIds  } from '../lib/network/getCommentIds'
 import CommentItem from './CommentItem'
 import getCommentInfoById, { ResData as CommentInfoRes } from '../lib/network/getCommentInfoById'
 import CircularProgress from '@mui/material/CircularProgress'
+import Button from '@mui/material/Button'
 
-const LIMIT = 10
+
+const LIMIT = 7
 export default function CommentList({
   clusterId,
-  offset = 0,
   beforeInteract,
   onDataLoadSuccess,
   toggleIdentity
 }: {
   clusterId: string,
-  offset?: number,
   beforeInteract: <T>(hadLoginCallback: T) => T,
   onDataLoadSuccess?: () => void
   toggleIdentity?: () => void
 }) {
-  const [isLoading, setIsLoading] = useState(true)
+  const offsetRef = useRef(0)
+  const [hasMore, setHasMore] = useState(true)
+  const [isInitLoading, setIsInitLoading] = useState(true)
+  const [isFetchMore, setIsFetchMore] = useState(false)
   const [commentInfos, setCommentInfos] = useState<(CommentInfoRes['comments'][0] & {topCommentId?: string})[]>([])
   // query all comment and reply id
-  const fetchComments: () => Promise<[] | CommentIds['ids']> = useCallback(async () => {
+  const fetchComments: (offset?: number) => Promise<[] | CommentIds['ids']> = useCallback(async (offset) => {
     try {
       const data = await getCommentIds(
         {
          clusterId,
-         offset,
-        //  limit: LIMIT
+         offset: offset ?? 0,
+         limit: LIMIT
        }
       )
+      setHasMore(data?.hasMore)
       return data?.ids ?? []
     } catch (err) {
       console.error(err)
       return []
     }
-  }, [clusterId, offset])
+  }, [clusterId])
 
   // mark topCommentId to reply
   const markTopCommentTopCommentInfos= useCallback((
@@ -63,8 +67,8 @@ export default function CommentList({
   }, [])
 
   // query comment and reply details by id
-  const fetch = useCallback( async () => {
-    const commentIds = await fetchComments()
+  const fetch = useCallback( async (offset?: number) => {
+    const commentIds = await fetchComments(offset)
     try {
       let flatIds: string[] = []
       commentIds.map(({
@@ -77,8 +81,9 @@ export default function CommentList({
          ids: flatIds
        }
       )
-      setIsLoading(false)
-      setCommentInfos( markTopCommentTopCommentInfos(commentIds, data.comments) )
+      setIsInitLoading(false)
+      offsetRef.current += commentIds.length
+      setCommentInfos(pre => [...pre, ...markTopCommentTopCommentInfos(commentIds, data.comments)] )
     } catch (err) {
       console.error({err});
       setCommentInfos( [] )
@@ -87,13 +92,19 @@ export default function CommentList({
   }, [fetchComments, markTopCommentTopCommentInfos, onDataLoadSuccess])
 
   useEffect(() => {
-    fetch()
+    fetch(0)
+  }, [fetch])
+
+  const fetchMore = useCallback(async () => {
+    setIsFetchMore(true)
+    await fetch(offsetRef.current)
+    setIsFetchMore(false)
   }, [fetch])
 
   return <div>
     <div style={{ display: 'flex', flex: 1, justifyContent: 'center'}}>
       {
-        isLoading && <CircularProgress color="inherit" />
+        isInitLoading && <CircularProgress color="inherit" />
       }
     </div>
     {
@@ -109,6 +120,14 @@ export default function CommentList({
         />
       </div>
       )
+    }
+    {
+      !isInitLoading && hasMore && 
+      <div style={{display: 'flex', justifyContent: 'center', flex: 1}}>
+        <Button variant='text' onClick={fetchMore}>
+          {isFetchMore ? '加载中...' : '加载更多'}
+        </Button>
+      </div>
     }
   </div>
 }

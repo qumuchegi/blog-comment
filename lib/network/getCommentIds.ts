@@ -11,6 +11,7 @@ export interface ResData {
     repliesId: string[],
     replyRepliesId: string[]
   }[]
+  hasMore: boolean
 }
 export default function getCommentIds(params: Params): Promise<ResData> {
   return Http._get(
