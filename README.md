@@ -1,4 +1,10 @@
-这是一个评论组件, 由 vercel/Next.js 托管, mongoDB 作为数据库，可以嵌入任意的 web 页面，前端框架无关
+<div>
+  <img src='./assets/comment.png' style="width: 200px;height: 200px"/>
+  <h1>Blog Comment</h1>
+</div>
+
+这是一个评论组件, 由 vercel/Next.js 托管, mongoDB 作为数据库，可以嵌入任意的 web 页面
+
 
 <a href='https://reactjs.org/versions'>
   <img src='https://img.shields.io/badge/Reac-17.0.2-yellowgreen'/>
@@ -24,11 +30,17 @@
 
 - [x] 支持 github 登录 (已支持)
 
+- [x] 支持 React
+
 - [] 主题定制 (计划中)
 
 - [] 国际化 (计划中)
 
+- [] 前端框架无关化(计划中)
+
 ## use
+
+[文档]()
 
 1. 在 mongoDB 官网申请一个数据库集群，复制数据库连接 URL 备用.
 2. fork 此项目仓库到你的 GitHub 账户.
@@ -40,7 +52,7 @@
 ，在 vercel 上面新增两个 环境变量，名字分别为 github_auth_secret 和 github_auth_clientid，值分别设置为 Client secrets 和 Client ID
  的值)，
 
- <img src='./assets/pic.png' width='500' style="margin-left: 100px"/>
+ <img src='./assets/pic.png' style="margin-left: 100px; width: 500px"/>
 
 5. 在 vercel 上面 deploy 即可部署完成
 6. 安装 [blog_comment_frame](https://www.npmjs.com/package/blog_comment_frame), 
@@ -60,7 +72,7 @@ import BlogCommentFrame from 'blog_comment_frame'
   <BlogCommentFrame
     commentDeployUrlHost={'http://xxxx.vercel.app'}
     pageId={articleId}
-    githubAuthClientId={'xxxxx'} // github OAuth application client id
+    githubAuthClientId={'xxxxx'} // github OAuth application client id, 最好用环境变量的发送引入
   />
 ```
 
