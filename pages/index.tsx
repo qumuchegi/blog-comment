@@ -12,9 +12,13 @@ const ANONYMOUS_ACCOUNT = {
   avatar: '/anonymous_avatar.png'
 }
 const Home = ({
-  articleId
+  articleId,
+  auth = [AuthPlatform.anonymous],
+  githubAuthClientId
 }: {
-  articleId: string
+  articleId: string,
+  auth: AuthPlatform[], // ['github', 'anonymous']
+  githubAuthClientId?: string
 }) => {
   const [openLoginDialog, setOpenLoginDialog] = useState(true)
   const [loginIdentity, setLoginIdentity] = useState<LoginIdentity>()
@@ -51,7 +55,10 @@ const Home = ({
     const INIT_IFRAME_MSG = 'iframe_init_msg'
     window.parent?.postMessage(
       JSON.stringify({
-        msg: INIT_IFRAME_MSG
+        msg: INIT_IFRAME_MSG,
+        data: {
+          githubAuthClientId: githubAuthClientId
+        }
       }),
       "*"
     )
@@ -134,6 +141,7 @@ const Home = ({
           }, [])}
           onLoginSuccess={onLoginSuccess}
           onLoginFailed={onLoginFailed}
+          auth={auth}
         />
       <div style={{
         backgroundColor: '#fff',
@@ -163,23 +171,29 @@ const Home = ({
 
 const ConnectStore = (
   {
-    articleId
+    articleId,
+    auth,
+    githubAuthClientId
   }: {
     articleId: string
+    auth: AuthPlatform[],
+    githubAuthClientId?: string
   }
 ) => {
   return <StoreProvider>
-    <Home articleId={articleId}/>
+    <Home articleId={articleId} auth={auth} githubAuthClientId={githubAuthClientId}/>
   </StoreProvider>
 }
 export default ConnectStore
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { articleId } = context.query || {}
+  const { articleId, auth } = context.query || {}
 
   return {
     props: {
-      articleId
+      articleId,
+      auth,
+      githubAuthClientId: process.env.github_auth_clientid
     }
   }
 }

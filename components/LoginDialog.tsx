@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useMemo } from 'react'
 import Select, { SelectChangeEvent } from '@mui/material/Select'
 import MenuItem from '@mui/material/MenuItem'
 import Image from 'next/image' 
@@ -28,7 +28,7 @@ interface IProps {
     authType: AuthPlatform
   ) => void,
   onLoginFailed: () => void,
-
+  auth?: AuthPlatform[] // ['github', 'anonymous']
 }
 const IDENTITIES = [
   {
@@ -53,7 +53,8 @@ export default function LoginDialog(
     openLoginDialog,
     onRequestCLose,
     onLoginSuccess,
-    onLoginFailed
+    onLoginFailed,
+    auth
   } = props
   const [isLoginLoading, setIsLoginLoading] = useState(false)
   const [currentLoginIdentity, maybeLoginedGithubInfo] = useStoreState(state => [
@@ -95,6 +96,10 @@ export default function LoginDialog(
     setIsLoginLoading(false)
   } ,[handleCloseLoginDialog, maybeLoginedGithubInfo, onLoginSuccess, selectedPlatform, toggleLoginIdentity])
 
+  const _IDENTITIES = useMemo(() => {
+    return IDENTITIES.filter(i => auth?.includes(i.platform))
+  }, [auth])
+
   if (!openLoginDialog) {
     return null
   }
@@ -117,7 +122,7 @@ export default function LoginDialog(
       <h3>选择参与评论身份</h3>
         <Select label='评论身份' onChange={onSelectPlatform} value={selectedPlatform}>
           {
-            IDENTITIES.map(({
+            _IDENTITIES.map(({
               platform,
               label,
               imgUrl
