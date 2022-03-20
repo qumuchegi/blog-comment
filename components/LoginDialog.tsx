@@ -7,6 +7,7 @@ import styles from './styles/LoginDialog.module.css'
 import openGithubAuth, { cacheGithubAuthInfo } from '../lib/login/github'
 import Modal from '@mui/material/Modal';
 import { useStoreAction, useStoreState } from './store'
+import Alert from '@mui/material/Alert'
 
 export enum AuthPlatform {
   anonymous = 'anonymous', // 匿名
@@ -54,16 +55,23 @@ export default function LoginDialog(
     onRequestCLose,
     onLoginSuccess,
     onLoginFailed,
-    auth
+    auth = [AuthPlatform.anonymous, AuthPlatform.github]
   } = props
   const [isLoginLoading, setIsLoginLoading] = useState(false)
+  const [loginWithoutIdent, setLoginWithoutIdent] = useState(false)
   const [currentLoginIdentity, maybeLoginedGithubInfo] = useStoreState(state => [
     state.currentLoginIdentity,
     state.githubAuthInfo
   ])
+  const _IDENTITIES = useMemo(() => {
+    return IDENTITIES.filter(i => auth.includes(i.platform))
+  }, [auth])
   const [toggleLoginIdentity, setGithubAuthInfo] = useStoreAction(actions => [actions.toggleLoginIdentity, actions.setGithubAuthInfo])
-  const [selectedPlatform, setSelectedPlatform] = useState<AuthPlatform>(AuthPlatform.anonymous)
+  const [selectedPlatform, setSelectedPlatform] = useState<AuthPlatform>(_IDENTITIES[0].platform)
   const onSelectPlatform = useCallback((event: SelectChangeEvent) => {
+    if (event.target.value) {
+      setLoginWithoutIdent(false)
+    }
     //@ts-ignore
     setSelectedPlatform(event.target.value as AuthPlatform)
   }, [])
@@ -71,6 +79,9 @@ export default function LoginDialog(
     onRequestCLose?.()
   }, [onRequestCLose])
   const login = useCallback(async () => {
+    if(!selectedPlatform) {
+      return setLoginWithoutIdent(true)
+    }
     setIsLoginLoading(true)
     if (selectedPlatform === AuthPlatform.anonymous) {
       onLoginSuccess(AuthPlatform.anonymous)
@@ -95,10 +106,6 @@ export default function LoginDialog(
     }
     setIsLoginLoading(false)
   } ,[handleCloseLoginDialog, maybeLoginedGithubInfo, onLoginSuccess, selectedPlatform, toggleLoginIdentity])
-
-  const _IDENTITIES = useMemo(() => {
-    return IDENTITIES.filter(i => auth?.includes(i.platform))
-  }, [auth])
 
   if (!openLoginDialog) {
     return null
@@ -145,6 +152,10 @@ export default function LoginDialog(
             : '登录'
           }
         </Button>
+        {
+          loginWithoutIdent
+          && <Alert severity="warning">选择身份!</Alert>
+        }
       </div>
     {/* </Dialog> */}
     </Modal>
