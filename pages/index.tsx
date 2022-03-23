@@ -4,6 +4,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { GetServerSideProps } from 'next'
 import LoginDialog, { LoginIdentity, AuthPlatform } from '../components/LoginDialog'
 import StoreProvider, { useStoreAction } from '../components/store'
+import { entriesToObj } from '../lib/utils/object'
 
 const ANONYMOUS_ACCOUNT = {
   userId: '',
@@ -14,11 +15,13 @@ const ANONYMOUS_ACCOUNT = {
 const Home = ({
   articleId,
   auth = [AuthPlatform.anonymous],
-  githubAuthClientId
+  githubAuthClientId,
+  parentHref
 }: {
   articleId: string,
   auth: AuthPlatform[], // ['github', 'anonymous']
-  githubAuthClientId?: string
+  githubAuthClientId?: string,
+  parentHref: string
 }) => {
   const [openLoginDialog, setOpenLoginDialog] = useState(true)
   const [loginIdentity, setLoginIdentity] = useState<LoginIdentity>()
@@ -62,56 +65,99 @@ const Home = ({
       }),
       "*"
     )
-  }, [])
+  }, [githubAuthClientId])
 
   useEffect(() => {
-    window.addEventListener('message', (evt) => {
-      try{
-        const data = JSON.parse(evt.data)
-        if ((data.msg === 'forward-github-auth-info')) {
-          const {
-            userHomeUrl,
-            auth_username,
-            auth_avatar,
-            // auth_token,
-            github_userid
-          } = data.data
-          if (
-            userHomeUrl
-            && auth_username
-            && auth_avatar
-            // && auth_token
-            && github_userid
-          ) {
-            setOpenLoginDialog(false)
-            const _loginIdentity = {
-              userId: github_userid,
-              authPlatform: AuthPlatform.github,
-              userName: auth_username,
-              avatar: auth_avatar,
-              url: userHomeUrl,
-              // token: auth_token
-            }
-            setLoginIdentity(_loginIdentity)
-            setGithubAuthInfo(
-              {
-                userId: github_userid,
-                username: auth_username,
-                avatar: window.decodeURIComponent(auth_avatar),
-                userHomeUrl: window.decodeURIComponent(userHomeUrl),
-                // token: auth_token
-              }
-            )
-          } else {
-          }
-        }
-      } catch (err) {
-
+    console.log({
+      cookie: document.cookie
+    })
+    const githubAuth = entriesToObj<{
+      userHomeUrl: string,
+      auth_username: string,
+      auth_avatar: string,
+      // auth_token,
+      github_userid: string
+    }>(document.cookie, ';', (v) => window.decodeURIComponent(v))
+    if (githubAuth?.userHomeUrl) {
+      const {
+        userHomeUrl,
+        auth_username,
+        auth_avatar,
+        // auth_token,
+        github_userid
+      } = githubAuth
+      setOpenLoginDialog(false)
+      const _loginIdentity = {
+        userId: github_userid,
+        authPlatform: AuthPlatform.github,
+        userName: auth_username,
+        avatar: auth_avatar,
+        url: userHomeUrl,
+        // token: auth_token
       }
-    }, false)
+      setLoginIdentity(_loginIdentity)
+      setGithubAuthInfo(
+        {
+          userId: github_userid,
+          username: auth_username,
+          avatar: window.decodeURIComponent(auth_avatar),
+          userHomeUrl: window.decodeURIComponent(userHomeUrl),
+          // token: auth_token
+        }
+      )
+    } else {
+      
+    }
+    // window.addEventListener('message', (evt) => {
+    //   try{
+    //     const data = JSON.parse(evt.data)
+    //     if ((data.msg === 'forward-github-auth-info')) {
+    //       const {
+    //         userHomeUrl,
+    //         auth_username,
+    //         auth_avatar,
+    //         // auth_token,
+    //         github_userid
+    //       } = data.data
+    //       if (
+    //         userHomeUrl
+    //         && auth_username
+    //         && auth_avatar
+    //         // && auth_token
+    //         && github_userid
+    //       ) {
+    //         setOpenLoginDialog(false)
+    //         const _loginIdentity = {
+    //           userId: github_userid,
+    //           authPlatform: AuthPlatform.github,
+    //           userName: auth_username,
+    //           avatar: auth_avatar,
+    //           url: userHomeUrl,
+    //           // token: auth_token
+    //         }
+    //         setLoginIdentity(_loginIdentity)
+    //         setGithubAuthInfo(
+    //           {
+    //             userId: github_userid,
+    //             username: auth_username,
+    //             avatar: window.decodeURIComponent(auth_avatar),
+    //             userHomeUrl: window.decodeURIComponent(userHomeUrl),
+    //             // token: auth_token
+    //           }
+    //         )
+    //       } else {
+    //       }
+    //     }
+    //   } catch (err) {
+
+    //   }
+    // }, false)
 
   }, [setGithubAuthInfo])
 
+  console.log({
+    loginIdentity
+  })
   const sendHeight = useCallback(() => {
     window.parent?.postMessage(
       JSON.stringify({
@@ -142,6 +188,8 @@ const Home = ({
           onLoginSuccess={onLoginSuccess}
           onLoginFailed={onLoginFailed}
           auth={auth}
+          githubAuthClientId={githubAuthClientId}
+          parentHref={parentHref}
         />
       <div style={{
         backgroundColor: '#fff',
@@ -173,27 +221,30 @@ const ConnectStore = (
   {
     articleId,
     auth,
-    githubAuthClientId
+    githubAuthClientId,
+    parentHref
   }: {
     articleId: string
     auth: AuthPlatform[],
-    githubAuthClientId?: string
+    githubAuthClientId?: string,
+    parentHref: string
   }
 ) => {
   return <StoreProvider>
-    <Home articleId={articleId} auth={auth} githubAuthClientId={githubAuthClientId}/>
+    <Home articleId={articleId} auth={auth} githubAuthClientId={githubAuthClientId} parentHref={parentHref}/>
   </StoreProvider>
 }
 export default ConnectStore
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { articleId, auth } = context.query || {}
+  const { articleId, auth, parentHref } = context.query || {}
 
   return {
     props: {
       articleId,
       auth,
-      githubAuthClientId: process.env.github_auth_clientid
+      githubAuthClientId: process.env.github_auth_clientid,
+      parentHref
     }
   }
 }
