@@ -8,6 +8,7 @@ import styles from './styles/CommentSendInput.module.css'
 import CommentItem from './CommentItem'
 import { ResData as CommentInfoRes } from '../lib/network/getCommentInfoById'
 import TextField from '@mui/material/TextField'
+import RichTextInput from './RichTextInput'
 import Avatar from './AvatarWithBadge'
 import { useStoreState } from './store'
 import { AuthPlatform } from './LoginDialog'
@@ -40,8 +41,8 @@ export default function CommentSendInput({
   const [isSendEmptyValue, setIsSendEmptyValue] = useState(false)
   const [isSending, setIsSending] = useState(false)
   const [newCommentInfo, setNewCommentInfo] = useState<CommentInfoRes['comments']>([])
-  const onInputChange: React.ChangeEventHandler<HTMLTextAreaElement> = useCallback((e) => {
-    setValue(e.target.value)
+  const onInputChange = useCallback((value) => {
+    setValue(value)
   }, [])
   const [currentLoginIdentity, maybeLoginedGithubInfo] = useStoreState(state => [
     state.currentLoginIdentity,
@@ -129,7 +130,12 @@ export default function CommentSendInput({
           badgeImgUrl={'/double-arrow.png'}
           />
       </div>
-      <TextField
+      <RichTextInput
+        placeholder={replyTo ? `回复 <span style="color: 'blue'">@${replyTo.toAccountName}</span>` : '输入评论 ...'}
+        inputStyle={`border: solid 1px #eee; padding: 5px`}
+        onChange={onInputChange}
+      />
+      {/* <TextField
         fullWidth
         // color='warning'
         variant="standard"
@@ -140,7 +146,7 @@ export default function CommentSendInput({
         onChange={onInputChange}
         multiline
         style={{backgroundColor: isSendEmptyValue ? 'rgba(235, 173, 173, 0.2)' : '#fff'}}
-      />
+      /> */}
       {/* <div> */}
        <Button onClick={_onSend} style={{height: '100%', color: 'black'}}>
           发送

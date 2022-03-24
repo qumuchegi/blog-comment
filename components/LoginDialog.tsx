@@ -64,7 +64,8 @@ export default function LoginDialog(
     state.githubAuthInfo
   ])
   const _IDENTITIES = useMemo(() => {
-    return IDENTITIES.filter(i => auth.includes(i.platform))
+    const _auth = (!auth || auth.length === 0) ? [AuthPlatform.anonymous, AuthPlatform.github] : auth
+    return IDENTITIES.filter(i => _auth.includes(i.platform))
   }, [auth])
   const [toggleLoginIdentity, setGithubAuthInfo] = useStoreAction(actions => [actions.toggleLoginIdentity, actions.setGithubAuthInfo])
   const [selectedPlatform, setSelectedPlatform] = useState<AuthPlatform>(_IDENTITIES[0].platform)

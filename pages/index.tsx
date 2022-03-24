@@ -62,7 +62,7 @@ const Home = ({
       }),
       "*"
     )
-  }, [])
+  }, [githubAuthClientId])
 
   useEffect(() => {
     window.addEventListener('message', (evt) => {
@@ -187,7 +187,7 @@ const ConnectStore = (
 export default ConnectStore
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { articleId, auth } = context.query || {}
+  const { articleId = '', auth = [] } = context.query || {}
 
   return {
     props: {
