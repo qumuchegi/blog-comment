@@ -75,7 +75,7 @@ async function githubLoginCallback(req: NextApiRequest, res: NextApiResponse) {
   res.setHeader(
     'Set-Cookie',
     cookies.map(({key, value}) => {
-      return serialize(key, value, {path: '/'})
+      return serialize(key, value, {path: '/', sameSite: 'none', secure: true })
     })
   )
   // res.status(200).json({

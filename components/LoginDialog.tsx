@@ -30,6 +30,8 @@ interface IProps {
   ) => void,
   onLoginFailed: () => void,
   auth?: AuthPlatform[] // ['github', 'anonymous']
+  githubAuthClientId?: string
+  parentHref: string
 }
 const IDENTITIES = [
   {
@@ -55,7 +57,9 @@ export default function LoginDialog(
     onRequestCLose,
     onLoginSuccess,
     onLoginFailed,
-    auth = [AuthPlatform.anonymous, AuthPlatform.github]
+    auth = [AuthPlatform.anonymous, AuthPlatform.github],
+    githubAuthClientId,
+    parentHref
   } = props
   const [isLoginLoading, setIsLoginLoading] = useState(false)
   const [loginWithoutIdent, setLoginWithoutIdent] = useState(false)
@@ -96,16 +100,20 @@ export default function LoginDialog(
         handleCloseLoginDialog()
         return toggleLoginIdentity(AuthPlatform.github)
       }
-      try {
-        await openGithubAuth()
-      } catch(err) {
-        console.error(err)
+      if (githubAuthClientId) {
+        try {
+          await openGithubAuth(githubAuthClientId, parentHref)
+        } catch(err) {
+          console.error(err)
+        }
+      } else {
+        throw new Error('你是否忘记添加环境变量 github_auth_clientid')
       }
     } else {
       onLoginSuccess(AuthPlatform.anonymous)
     }
     setIsLoginLoading(false)
-  } ,[handleCloseLoginDialog, maybeLoginedGithubInfo, onLoginSuccess, selectedPlatform, toggleLoginIdentity])
+  } ,[githubAuthClientId, handleCloseLoginDialog, maybeLoginedGithubInfo, onLoginSuccess, parentHref, selectedPlatform, toggleLoginIdentity])
 
   if (!openLoginDialog) {
     return null
