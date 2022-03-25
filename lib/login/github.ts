@@ -29,14 +29,13 @@ const PARENT_GITHUB_AUTH_MSG_START = 'PARENT_GITHUB_AUTH_MSG_START'
 export default function openGithubAuth(githubAuthClientId: string, parentHref: string) {
   const url = `https://github.com/login/oauth/authorize?client_id=${githubAuthClientId}`
     + (
-      `&redirect_uri=${`${window.location.origin}/api/githubLoginCallback?redirect_url=` + encodeURIComponent(parentHref ||  window.location.href)}`
+      `&redirect_uri=${`${window.location.origin}/api/githubLoginCallback?redirect_url=`
+      + encodeURIComponent(window.location.origin + '/blankPageForAuth')}`
     )
-  window.open(url)
-  //window.location.href = url
-  // window.parent?.postMessage(
-  //   JSON.stringify({
-  //     msg: PARENT_GITHUB_AUTH_MSG_START
-  //   }),
-  //   '*'
-  // )
+  const newWin = window.open(url)
+  // 建立和 newWin 的通信频道
+  const channel = new BroadcastChannel('github-auth-message')
+  channel.addEventListener('message', evt => {
+    window.location.reload()
+  })
 }
