@@ -3,10 +3,13 @@ import { BroadcastChannel } from 'broadcast-channel'
 
 export default function BlankPageForAuth() {
   useEffect(() => {
-    const channel = new BroadcastChannel('github-auth-message')
-    channel.postMessage(JSON.stringify({
-      cookie: document.cookie
-    }))
+    const channel = new BroadcastChannel('github-auth-message', {
+      type: 'localstorage',
+      webWorkerSupport: true
+    })
+    channel.postMessage(
+      document.cookie
+    )
     window.close()
   }, [])
   return <div>

@@ -1,5 +1,3 @@
-import { BroadcastChannel } from 'broadcast-channel'
-
 type GithubAuth = {
   userId: string,
   username: string,
@@ -35,9 +33,4 @@ export default function openGithubAuth(githubAuthClientId: string, parentHref: s
       + encodeURIComponent(window.location.origin + '/blankPageForAuth')}`
     )
   const newWin = window.open(url)
-  // 建立和 newWin 的通信频道
-  const channel = new BroadcastChannel('github-auth-message')
-  channel.addEventListener('message', evt => {
-    window.location.reload()
-  })
 }

@@ -5,6 +5,7 @@ import { GetServerSideProps } from 'next'
 import LoginDialog, { LoginIdentity, AuthPlatform } from '../components/LoginDialog'
 import StoreProvider, { useStoreAction } from '../components/store'
 import { entriesToObj } from '../lib/utils/object'
+import { BroadcastChannel } from 'broadcast-channel'
 
 const ANONYMOUS_ACCOUNT = {
   userId: '',
@@ -68,16 +69,24 @@ const Home = ({
   }, [githubAuthClientId])
 
   useEffect(() => {
-    console.log({
-      cookie: document.cookie
-    })
+    // BroadcastChannel 借助 local Storage 存储的登陆信息
+    const localStorageValue = localStorage.getItem('pubkey.broadcastChannel-github-auth-message')
+
+    let githubAuthCookieValue = ''
+    try {
+      githubAuthCookieValue = JSON.parse(localStorageValue || '{}').data.data
+    } catch (err) {
+      githubAuthCookieValue = ''
+    }
+    console.log('githubAuthCookieValue', githubAuthCookieValue)
     const githubAuth = entriesToObj<{
       userHomeUrl: string,
       auth_username: string,
       auth_avatar: string,
       // auth_token,
       github_userid: string
-    }>(document.cookie, ';', (v) => window.decodeURIComponent(v))
+      // 不知道为什么在移动端浏览器，登陆后 cookie 是空的，
+    }>(/*document.cookie*/githubAuthCookieValue, ';', (v) => window.decodeURIComponent(v))
     if (githubAuth?.userHomeUrl) {
       const {
         userHomeUrl,
@@ -108,56 +117,8 @@ const Home = ({
     } else {
       
     }
-    // window.addEventListener('message', (evt) => {
-    //   try{
-    //     const data = JSON.parse(evt.data)
-    //     if ((data.msg === 'forward-github-auth-info')) {
-    //       const {
-    //         userHomeUrl,
-    //         auth_username,
-    //         auth_avatar,
-    //         // auth_token,
-    //         github_userid
-    //       } = data.data
-    //       if (
-    //         userHomeUrl
-    //         && auth_username
-    //         && auth_avatar
-    //         // && auth_token
-    //         && github_userid
-    //       ) {
-    //         setOpenLoginDialog(false)
-    //         const _loginIdentity = {
-    //           userId: github_userid,
-    //           authPlatform: AuthPlatform.github,
-    //           userName: auth_username,
-    //           avatar: auth_avatar,
-    //           url: userHomeUrl,
-    //           // token: auth_token
-    //         }
-    //         setLoginIdentity(_loginIdentity)
-    //         setGithubAuthInfo(
-    //           {
-    //             userId: github_userid,
-    //             username: auth_username,
-    //             avatar: window.decodeURIComponent(auth_avatar),
-    //             userHomeUrl: window.decodeURIComponent(userHomeUrl),
-    //             // token: auth_token
-    //           }
-    //         )
-    //       } else {
-    //       }
-    //     }
-    //   } catch (err) {
-
-    //   }
-    // }, false)
-
   }, [setGithubAuthInfo])
 
-  console.log({
-    loginIdentity
-  })
   const sendHeight = useCallback(() => {
     window.parent?.postMessage(
       JSON.stringify({
@@ -172,6 +133,17 @@ const Home = ({
 
   const showLoginDialog = useCallback(() => {
     setOpenLoginDialog(true)
+  }, [])
+
+  useEffect(() => {
+    // 建立和 newWin 的通信频道
+    const channel = new BroadcastChannel('github-auth-message', {
+      type: 'localstorage',
+      webWorkerSupport: true
+    })
+    channel.addEventListener('message', evt => {
+      window.location.reload()
+    })
   }, [])
 
   return (
