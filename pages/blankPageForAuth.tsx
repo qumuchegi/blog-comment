@@ -1,4 +1,5 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import React, { useEffect} from 'react'
+import { BroadcastChannel } from 'broadcast-channel'
 
 export default function BlankPageForAuth() {
   useEffect(() => {
@@ -9,6 +10,6 @@ export default function BlankPageForAuth() {
     window.close()
   }, [])
   return <div>
-    <h2>登陆成功！</h2>
+    <h2 style={{textAlign: 'center'}}>登陆成功, 正在跳转...</h2>
   </div>
 }

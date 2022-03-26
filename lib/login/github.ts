@@ -1,3 +1,5 @@
+import { BroadcastChannel } from 'broadcast-channel'
+
 type GithubAuth = {
   userId: string,
   username: string,
