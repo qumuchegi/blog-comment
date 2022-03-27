@@ -26,11 +26,11 @@ export const getCachedGithubAuthInfo = () => {
 }
 
 const PARENT_GITHUB_AUTH_MSG_START = 'PARENT_GITHUB_AUTH_MSG_START'
-export default function openGithubAuth() {
-  window.parent?.postMessage(
-    JSON.stringify({
-      msg: PARENT_GITHUB_AUTH_MSG_START
-    }),
-    '*'
-  )
+export default function openGithubAuth(githubAuthClientId: string, parentHref: string) {
+  const url = `https://github.com/login/oauth/authorize?client_id=${githubAuthClientId}`
+    + (
+      `&redirect_uri=${`${window.location.origin}/api/githubLoginCallback?redirect_url=`
+      + encodeURIComponent(window.location.origin + '/blankPageForAuth')}`
+    )
+  const newWin = window.open(url)
 }
