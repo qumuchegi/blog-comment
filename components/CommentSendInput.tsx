@@ -134,20 +134,29 @@ export default function CommentSendInput({
     >
       <CircularProgress color="inherit" />
     </Backdrop>
-    <div className={styles.container}>
-      <div style={{marginRight: 20, marginLeft: 5}}>
-        <Avatar
-          avatarUrl={currentLoginIdentity === AuthPlatform.github ? maybeLoginedGithubInfo?.avatar : '/anonymous_avatar.png'}
-          onClick={toggleLoginIdentity}
-          badgeImgUrl={'/double-arrow.png'}
-          />
-      </div>
+    <div>
       <RichTextInput
         placeholder={replyTo ? `回复 <span style="color: 'blue'">@${replyTo.toAccountName}</span>` : '输入评论 ...'}
         inputStyle={`border: solid 1px #eee; padding: 5px`}
         value={value.text}
         onChange={onInputChange}
       />
+      <div className={styles.container}>
+        <div style={{marginRight: 20, marginLeft: 5}}>
+          <Avatar
+            avatarUrl={currentLoginIdentity === AuthPlatform.github ? maybeLoginedGithubInfo?.avatar : '/anonymous_avatar.png'}
+            onClick={toggleLoginIdentity}
+            badgeImgUrl={'/double-arrow.png'}
+            />
+        </div>
+        <Button
+          onClick={_onSend}
+          style={{height: '100%', color: !value.text ? '#aaa': 'black'}}
+          disabled={!value.text}
+        >
+          发送
+        </Button>
+      </div>
       {/* <TextField
         fullWidth
         // color='warning'
@@ -161,13 +170,6 @@ export default function CommentSendInput({
         style={{backgroundColor: isSendEmptyValue ? 'rgba(235, 173, 173, 0.2)' : '#fff'}}
       /> */}
       {/* <div> */}
-       <Button
-        onClick={_onSend}
-        style={{height: '100%', color: !value.text ? '#aaa': 'black'}}
-        disabled={!value.text}
-       >
-          发送
-        </Button>
       {/* </div> */}
     </div>
     {

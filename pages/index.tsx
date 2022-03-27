@@ -146,6 +146,21 @@ const Home = ({
     })
   }, [])
 
+  useEffect(() => {
+    const observer = new MutationObserver(() => {
+      sendHeight()
+    })
+  
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+      characterData: true,
+    })
+    return () => {
+      observer.disconnect()
+    }
+  }, [sendHeight])
+
   return (
     <div
       id='commentBodyId'
@@ -172,7 +187,7 @@ const Home = ({
           articleId={clusterId}
           beforeInteract={ensureLogin}
           toggleIdentity={showLoginDialog}
-          onSuccess={sendHeight}
+          // onSuccess={sendHeight}
         /> 
       </div>
       <div style={{
@@ -181,7 +196,7 @@ const Home = ({
         <CommentList
           clusterId={clusterId}
           beforeInteract={ensureLogin}
-          onDataLoadSuccess={sendHeight}
+          // onDataLoadSuccess={sendHeight}
           toggleIdentity={showLoginDialog}
         />
       </div>

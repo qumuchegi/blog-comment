@@ -245,8 +245,8 @@ function MenuBar({
               alt={alt}
               // @ts-ignore
               className={`${styles.menuIcon} ${editor.isActive(style) ? styles.menuIconSelected : ''}`}
-              width={20}
-              height={20}
+              width={'20px'}
+              height={'20px'}
             />
           </div>
         }
@@ -258,8 +258,8 @@ function MenuBar({
                 return <MenuItem onClick={item.onSelect} key={item.key} value={item.key}>
                   <Image
                     src={item.icon}
-                    width={20}
-                    height={20}
+                    width={'20px'}
+                    height={'20px'}
                     alt='heading'
                   />
                 </MenuItem>

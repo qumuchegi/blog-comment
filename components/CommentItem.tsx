@@ -9,10 +9,12 @@ import Button from '@mui/material/Button'
 import Image from 'next/image' 
 import Snackbar from '@mui/material/Snackbar'
 import dayjs from 'dayjs'
+import 'dayjs/locale/zh-cn'
 import relativeTimePulgin from'dayjs/plugin/relativeTime'
 import RichTextRenderer from './RichTextRenderer'
 
 dayjs.extend(relativeTimePulgin)
+dayjs.locale('zh-cn')
 const ONE_DAY = 1000 * 60 * 60 * 24
 /**
  * 不要用 useState、useEffect、等

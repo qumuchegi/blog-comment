@@ -3,6 +3,7 @@
   justify-content: flex-start;
   align-items: center;
   flex: 1;
+  padding: 20px 0;
 }
 .newComment {
   background-color: aliceblue;
