@@ -209,7 +209,7 @@ const ConnectStore = (
 export default ConnectStore
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { articleId = '', auth = [], parentHref } = context.query || {}
+  const { articleId = '', auth = [], parentHref  = '' } = context.query || {}
 
   return {
     props: {

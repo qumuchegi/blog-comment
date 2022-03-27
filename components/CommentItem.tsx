@@ -10,6 +10,7 @@ import Image from 'next/image'
 import Snackbar from '@mui/material/Snackbar'
 import dayjs from 'dayjs'
 import relativeTimePulgin from'dayjs/plugin/relativeTime'
+import RichTextRenderer from './RichTextRenderer'
 
 dayjs.extend(relativeTimePulgin)
 const ONE_DAY = 1000 * 60 * 60 * 24
@@ -112,7 +113,10 @@ export default function CommentItem({
             }
           <div>{commentInfo?.commenter?.email}</div>
         </div>
-        <div className={styles.commentContent}>{commentInfo?.content}</div>
+        <div className={styles.commentContent}>
+          <RichTextRenderer content={commentInfo?.content}/>
+          {/* {commentInfo?.content} */}
+        </div>
         <div className={styles.footer}>
           <div className={styles.time}>{
             now - commentInfo?.createTime > ONE_DAY

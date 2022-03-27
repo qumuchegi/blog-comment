@@ -133,6 +133,7 @@ export default function CommentSendInput({
       <RichTextInput
         placeholder={replyTo ? `回复 <span style="color: 'blue'">@${replyTo.toAccountName}</span>` : '输入评论 ...'}
         inputStyle={`border: solid 1px #eee; padding: 5px`}
+        value={value}
         onChange={onInputChange}
       />
       {/* <TextField
