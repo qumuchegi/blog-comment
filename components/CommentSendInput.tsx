@@ -151,11 +151,19 @@ export default function CommentSendInput({
         </div>
         <Button
           onClick={_onSend}
-          style={{height: '100%', color: !value.text ? '#aaa': 'black'}}
+          variant='contained'
+          style={{height: '100%', color: !value.text ? '#aaa': 'white'}}
           disabled={!value.text}
         >
           发送
         </Button>
+        <div style={{fontSize: '0.5rem', color: '#aaa'}}>
+          {
+            replyTo
+            ? <span>回复 <span style={{fontWeight: 'bold'}}>@{replyTo.toAccountName}</span></span>
+            : ''
+          }
+        </div>
       </div>
       {/* <TextField
         fullWidth

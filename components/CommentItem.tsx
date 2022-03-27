@@ -168,7 +168,7 @@ export default function CommentItem({
         </div>
         {
           isShowReplyInput &&
-          <div style={{marginTop: '10px'}}>
+          <div style={{marginTop: '10px', marginLeft: '40px'}}>
             <CommentSendInput
               articleId={articleId}
               replyTo={{
