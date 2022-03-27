@@ -37,19 +37,28 @@ export default function CommentSendInput({
   replyTo,
   toggleIdentity
 }: Props) {
-  const [value, setValue] = useState('')
+  const [value, setValue] = useState<{
+    text: string
+    html: string
+  }>({
+    text: '',
+    html: ''
+  })
   const [isSendEmptyValue, setIsSendEmptyValue] = useState(false)
   const [isSending, setIsSending] = useState(false)
   const [newCommentInfo, setNewCommentInfo] = useState<CommentInfoRes['comments']>([])
-  const onInputChange = useCallback((value) => {
-    setValue(value)
+  const onInputChange = useCallback((textValue, htmlValue) => {
+    setValue({
+      text: textValue,
+      html: htmlValue
+    })
   }, [])
   const [currentLoginIdentity, maybeLoginedGithubInfo] = useStoreState(state => [
     state.currentLoginIdentity,
     state.githubAuthInfo
   ])
   const _onSend = useMemo(() => beforeInteract((async () => {
-    if (!articleId || !value) {
+    if (!articleId || !value.text) {
       setIsSendEmptyValue(true)
       setTimeout(() => {
         setIsSendEmptyValue(false)
@@ -80,7 +89,7 @@ export default function CommentSendInput({
     }
     let params = {
       clusterId: articleId,
-      content: value,
+      content: value.html,
       commenter
     }
     let request
@@ -103,7 +112,10 @@ export default function CommentSendInput({
       const res = await request(params)
       setNewCommentInfo(pre => [res.newComment, ...pre])
       onSuccess?.(res.newComment)
-      setValue('')
+      setValue({
+        text: '',
+        html: ''
+      })
     } catch (err) {
       onFailed?.()
     }
@@ -133,7 +145,7 @@ export default function CommentSendInput({
       <RichTextInput
         placeholder={replyTo ? `回复 <span style="color: 'blue'">@${replyTo.toAccountName}</span>` : '输入评论 ...'}
         inputStyle={`border: solid 1px #eee; padding: 5px`}
-        value={value}
+        value={value.text}
         onChange={onInputChange}
       />
       {/* <TextField

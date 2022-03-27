@@ -16,7 +16,7 @@ interface IProps {
   value?: string
   placeholder?: string
   isUseMarkdown?: boolean
-  onChange?: (value: string) => void
+  onChange?: (value: string, htmlValue: string) => void
   inputStyle?: string
 }
 export default function RichTextInput(props: IProps) {
@@ -28,9 +28,10 @@ export default function RichTextInput(props: IProps) {
     inputStyle = ''
   } = props
   const onEditorUpdate: EditorOptions['onTransaction'] = useCallback(({ editor, transaction }) => {
-    let contentStr = editor.getHTML()
+    let contentHtmlStr = editor.getHTML()
+    let contentTextStr = editor.getText()
     // console.log({contentStr});
-    onChange?.(contentStr)
+    onChange?.(contentTextStr, contentHtmlStr)
   }, [onChange])
   const onFocus: EditorOptions['onFocus'] = useCallback(({ editor, event  }) => {
     // console.log({event})
@@ -65,7 +66,7 @@ export default function RichTextInput(props: IProps) {
     if (value === '') {
       editor?.commands.setContent('')
     }
-  }, [editor?.commands, value])
+  }, [value, editor])
 
   return (
     <div style={{width: '100%', height: '100%'}}>
