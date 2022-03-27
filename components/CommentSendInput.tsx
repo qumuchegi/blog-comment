@@ -161,7 +161,11 @@ export default function CommentSendInput({
         style={{backgroundColor: isSendEmptyValue ? 'rgba(235, 173, 173, 0.2)' : '#fff'}}
       /> */}
       {/* <div> */}
-       <Button onClick={_onSend} style={{height: '100%', color: 'black'}}>
+       <Button
+        onClick={_onSend}
+        style={{height: '100%', color: !value.text ? '#aaa': 'black'}}
+        disabled={!value.text}
+       >
           发送
         </Button>
       {/* </div> */}
