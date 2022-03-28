@@ -9,9 +9,12 @@ import Button from '@mui/material/Button'
 import Image from 'next/image' 
 import Snackbar from '@mui/material/Snackbar'
 import dayjs from 'dayjs'
+import 'dayjs/locale/zh-cn'
 import relativeTimePulgin from'dayjs/plugin/relativeTime'
+import RichTextRenderer from './RichTextRenderer'
 
 dayjs.extend(relativeTimePulgin)
+dayjs.locale('zh-cn')
 const ONE_DAY = 1000 * 60 * 60 * 24
 /**
  * 不要用 useState、useEffect、等
@@ -112,7 +115,10 @@ export default function CommentItem({
             }
           <div>{commentInfo?.commenter?.email}</div>
         </div>
-        <div className={styles.commentContent}>{commentInfo?.content}</div>
+        <div className={styles.commentContent}>
+          <RichTextRenderer content={commentInfo?.content}/>
+          {/* {commentInfo?.content} */}
+        </div>
         <div className={styles.footer}>
           <div className={styles.time}>{
             now - commentInfo?.createTime > ONE_DAY
@@ -162,7 +168,7 @@ export default function CommentItem({
         </div>
         {
           isShowReplyInput &&
-          <div style={{marginTop: '10px'}}>
+          <div style={{marginTop: '10px', marginLeft: '40px'}}>
             <CommentSendInput
               articleId={articleId}
               replyTo={{

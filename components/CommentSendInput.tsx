@@ -8,6 +8,7 @@ import styles from './styles/CommentSendInput.module.css'
 import CommentItem from './CommentItem'
 import { ResData as CommentInfoRes } from '../lib/network/getCommentInfoById'
 import TextField from '@mui/material/TextField'
+import RichTextInput from './RichTextInput'
 import Avatar from './AvatarWithBadge'
 import { useStoreState } from './store'
 import { AuthPlatform } from './LoginDialog'
@@ -36,19 +37,28 @@ export default function CommentSendInput({
   replyTo,
   toggleIdentity
 }: Props) {
-  const [value, setValue] = useState('')
+  const [value, setValue] = useState<{
+    text: string
+    html: string
+  }>({
+    text: '',
+    html: ''
+  })
   const [isSendEmptyValue, setIsSendEmptyValue] = useState(false)
   const [isSending, setIsSending] = useState(false)
   const [newCommentInfo, setNewCommentInfo] = useState<CommentInfoRes['comments']>([])
-  const onInputChange: React.ChangeEventHandler<HTMLTextAreaElement> = useCallback((e) => {
-    setValue(e.target.value)
+  const onInputChange = useCallback((textValue, htmlValue) => {
+    setValue({
+      text: textValue,
+      html: htmlValue
+    })
   }, [])
   const [currentLoginIdentity, maybeLoginedGithubInfo] = useStoreState(state => [
     state.currentLoginIdentity,
     state.githubAuthInfo
   ])
   const _onSend = useMemo(() => beforeInteract((async () => {
-    if (!articleId || !value) {
+    if (!articleId || !value.text) {
       setIsSendEmptyValue(true)
       setTimeout(() => {
         setIsSendEmptyValue(false)
@@ -79,7 +89,7 @@ export default function CommentSendInput({
     }
     let params = {
       clusterId: articleId,
-      content: value,
+      content: value.html,
       commenter
     }
     let request
@@ -102,7 +112,10 @@ export default function CommentSendInput({
       const res = await request(params)
       setNewCommentInfo(pre => [res.newComment, ...pre])
       onSuccess?.(res.newComment)
-      setValue('')
+      setValue({
+        text: '',
+        html: ''
+      })
     } catch (err) {
       onFailed?.()
     }
@@ -121,15 +134,38 @@ export default function CommentSendInput({
     >
       <CircularProgress color="inherit" />
     </Backdrop>
-    <div className={styles.container}>
-      <div style={{marginRight: 20, marginLeft: 5}}>
-        <Avatar
-          avatarUrl={currentLoginIdentity === AuthPlatform.github ? maybeLoginedGithubInfo?.avatar : '/anonymous_avatar.png'}
-          onClick={toggleLoginIdentity}
-          badgeImgUrl={'/double-arrow.png'}
-          />
+    <div>
+      <RichTextInput
+        placeholder={replyTo ? `回复 <span style="color: 'blue'">@${replyTo.toAccountName}</span>` : '输入评论 ...'}
+        inputStyle={`border: solid 1px #eee; padding: 5px`}
+        value={value.text}
+        onChange={onInputChange}
+      />
+      <div className={styles.container}>
+        <div style={{marginRight: 20, marginLeft: 5}}>
+          <Avatar
+            avatarUrl={currentLoginIdentity === AuthPlatform.github ? maybeLoginedGithubInfo?.avatar : '/anonymous_avatar.png'}
+            onClick={toggleLoginIdentity}
+            badgeImgUrl={'/double-arrow.png'}
+            />
+        </div>
+        <Button
+          onClick={_onSend}
+          variant='contained'
+          style={{height: '100%', color: !value.text ? '#aaa': 'white'}}
+          disabled={!value.text}
+        >
+          发送
+        </Button>
+        <div style={{fontSize: '0.5rem', color: '#aaa'}}>
+          {
+            replyTo
+            ? <span>回复 <span style={{fontWeight: 'bold'}}>@{replyTo.toAccountName}</span></span>
+            : ''
+          }
+        </div>
       </div>
-      <TextField
+      {/* <TextField
         fullWidth
         // color='warning'
         variant="standard"
@@ -140,11 +176,8 @@ export default function CommentSendInput({
         onChange={onInputChange}
         multiline
         style={{backgroundColor: isSendEmptyValue ? 'rgba(235, 173, 173, 0.2)' : '#fff'}}
-      />
+      /> */}
       {/* <div> */}
-       <Button onClick={_onSend} style={{height: '100%', color: 'black'}}>
-          发送
-        </Button>
       {/* </div> */}
     </div>
     {
