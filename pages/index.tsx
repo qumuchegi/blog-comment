@@ -1,11 +1,12 @@
 import CommentSendInput from '../components/CommentSendInput'
 import CommentList from '../components/CommentList'
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState, lazy } from 'react'
 import { GetServerSideProps } from 'next'
 import LoginDialog, { LoginIdentity, AuthPlatform } from '../components/LoginDialog'
 import StoreProvider, { useStoreAction } from '../components/store'
 import { entriesToObj } from '../lib/utils/object'
 import { BroadcastChannel } from 'broadcast-channel'
+import LoadComponent from '../lib/Loadable/LazyComponent'
 
 const ANONYMOUS_ACCOUNT = {
   userId: '',
@@ -188,7 +189,7 @@ const Home = ({
           beforeInteract={ensureLogin}
           toggleIdentity={showLoginDialog}
           // onSuccess={sendHeight}
-        /> 
+        />
       </div>
       <div style={{
         padding: '10px'

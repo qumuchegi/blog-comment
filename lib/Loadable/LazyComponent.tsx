@@ -1,14 +1,14 @@
-import React, { LazyExoticComponent, Suspense } from 'react';
+import React, { LazyExoticComponent, Suspense } from "react";
+import CircularProgress from "@mui/material/CircularProgress";
 
-export default function LoadComponent(
-  {
-    LazyComponent
-  }:
-  {
-    LazyComponent: LazyExoticComponent<any>
-  }
-) {
-  return <Suspense fallback={<div>loading</div>}>
-    <LazyComponent/>
-  </Suspense>
+export default function LoadComponent({
+  children,
+}: {
+  children: React.ReactChild;
+}) {
+  return (
+    <Suspense fallback={<CircularProgress color="inherit" />}>
+      {children}
+    </Suspense>
+  );
 }
