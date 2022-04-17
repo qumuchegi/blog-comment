@@ -165,7 +165,7 @@ const ConnectStore = (
 export default ConnectStore
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { articleId = '', auth = [AuthPlatform.github], parentHref  = '' } = context.query || {}
+  const { articleId = '', auth = [AuthPlatform.anonymous, AuthPlatform.github], parentHref  = '' } = context.query || {}
 
   return {
     props: {
