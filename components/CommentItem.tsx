@@ -24,7 +24,6 @@ export default function CommentItem({
   commentInfo,
   topCommentId,
   hideInteract,
-  beforeInteract,
   onSendReply,
   toggleIdentity
 }: {
@@ -32,7 +31,6 @@ export default function CommentItem({
   commentInfo: CommentInfoRes['comments'][0],
   topCommentId?: string,
   hideInteract?: boolean,
-  beforeInteract: <T>(hadLoginCallback: T) => T,
   onSendReply?: () => void,
   toggleIdentity?: () => void
 }) {
@@ -53,7 +51,7 @@ export default function CommentItem({
   const closeReply = () => {
     setIsShowReplyInput(false)
   }
-  const likeComment = useMemo(() => beforeInteract((
+  const likeComment = useMemo(() => (
     async () => {
       if (isShowLiked) {
         return
@@ -68,7 +66,7 @@ export default function CommentItem({
         alert('点赞失败！')
       }
     }
-  )), [beforeInteract, commentInfo?.id, isShowLiked])
+  ), [commentInfo?.id, isShowLiked])
   const isCommenterGithubAccount = useMemo(() => {
     return commentInfo?.commenter?.accountType === 1
   }, [commentInfo])
@@ -82,11 +80,8 @@ export default function CommentItem({
     }
   }, [commentInfo?.commenter?.url, isCommenterGithubAccount])
   return <div style={{
-    // borderLeft: commentInfo?.isReply ? 'solid 1px #eee' : '',
     marginLeft: commentInfo?.isReply ? '40px' : '0px',
     backgroundColor: commentInfo?.isReply ? '#f7f4fab3' : ''
-    // borderLeft: commentInfo?.isReply ? 'solid 1px #bbb' : undefined,
-    // marginBottom: '0px'
   }} className={styles.body}>
     {
       commentInfo
@@ -179,7 +174,6 @@ export default function CommentItem({
                 topCommentId: topCommentId
               }}
               onSuccess={onSendReplySuccess}
-              beforeInteract={beforeInteract}
               toggleIdentity={toggleIdentity}
             /> 
           </div>
@@ -195,7 +189,6 @@ export default function CommentItem({
             commentInfo={item}
             articleId={articleId}
             hideInteract={true}
-            beforeInteract={beforeInteract}
           />)
         }
       </div>

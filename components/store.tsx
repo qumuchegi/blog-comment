@@ -1,25 +1,36 @@
 import React, { createContext, useCallback, useContext, useMemo, useState } from 'react'
+import openGithubAuth from '../lib/login/github'
 import { GithubAuth } from '../types/context'
 import { AuthPlatform } from './LoginDialog'
 
 type ContextValue = {
   state: {
+    authConfig: AuthPlatform[],
+    githubAuthClientId?: string,
+    parentHref?: string,
     currentLoginIdentity: AuthPlatform,
     githubAuthInfo?: GithubAuth
   }
   actions: {
     toggleLoginIdentity: (LoginIdentity: AuthPlatform) => void,
-    setGithubAuthInfo: (githubAuthInfo: GithubAuth) => void
+    setGithubAuthInfo: (githubAuthInfo: GithubAuth) => void,
+    startLogin: (
+      selectLoginIdentity: AuthPlatform,
+      onSucc?: () => void,
+      onFail?: () => void
+    ) => void
   }
 }
 const DEFAULT_CTX_VALUE: ContextValue = {
   state: {
+    authConfig: [AuthPlatform.anonymous, AuthPlatform.github],
     currentLoginIdentity: AuthPlatform.anonymous,
     githubAuthInfo: undefined
   },
   actions: {
     toggleLoginIdentity: (LoginIdentity: AuthPlatform) => {},
-    setGithubAuthInfo: (githubAuthInfo: GithubAuth) => {}
+    setGithubAuthInfo: (githubAuthInfo: GithubAuth) => {},
+    startLogin: (selectLoginIdentity: AuthPlatform) => {}
   }
 }
 const GlobalContext = createContext<ContextValue>(DEFAULT_CTX_VALUE)
@@ -29,11 +40,25 @@ export const useStoreState = (getter: (state: ContextValue['state']) => any) => 
 export const useStoreAction = (getter: (actions: ContextValue['actions']) => any) => getter(useContext(GlobalContext).actions)
 
 const StoreProvider: React.FC<{
+  authConfig: AuthPlatform[],
+  githubAuthClientId?: string,
+  parentHref?: string,
   children: React.ReactChild
 }> = ({
+  authConfig,
+  githubAuthClientId,
+  parentHref,
   children
 }) => {
-  const [value, setValue] = useState<ContextValue>(DEFAULT_CTX_VALUE)
+  const [value, setValue] = useState<ContextValue>({
+    ...DEFAULT_CTX_VALUE,
+    state: {
+      ...DEFAULT_CTX_VALUE.state,
+      authConfig,
+      githubAuthClientId,
+      parentHref
+    }
+  })
 
   const setGithubAuthInfo = useCallback(
     (githubAuthInfo: GithubAuth) => {
@@ -59,15 +84,51 @@ const StoreProvider: React.FC<{
     }))
   }, [])
 
+  const loginGithub = useCallback(async () => {
+    if (githubAuthClientId && parentHref) {
+      await openGithubAuth(githubAuthClientId, parentHref)
+    } else {
+      throw new Error('你是否忘记添加环境变量 github_auth_clientid')
+    }
+  }, [githubAuthClientId, parentHref])
+
+  const startLogin = useCallback(async (
+    selectLoginIdentity: AuthPlatform,
+    loginSecc?: () => void,
+    loginFailed?: () => void
+  ) => {
+    switch(selectLoginIdentity) {
+      case AuthPlatform.anonymous:
+        toggleLoginIdentity(AuthPlatform.anonymous)
+        loginSecc?.()
+        break
+      case AuthPlatform.github:
+        if (value.state.githubAuthInfo) {
+          loginSecc?.()
+          return toggleLoginIdentity(AuthPlatform.github)
+        }
+        try {
+          await loginGithub()
+          loginSecc?.()
+          toggleLoginIdentity(AuthPlatform.github)
+        } catch(err) {
+          console.error(err)
+          loginFailed?.()
+        }
+        break
+    }
+  }, [loginGithub, toggleLoginIdentity, value.state.githubAuthInfo])
+
   return <GlobalContext.Provider value={
     useMemo(() => ({
       ...value,
       actions: {
         ...value.actions,
         setGithubAuthInfo,
-        toggleLoginIdentity
+        toggleLoginIdentity,
+        startLogin
       }
-    }), [setGithubAuthInfo, toggleLoginIdentity, value])
+    }), [setGithubAuthInfo, toggleLoginIdentity, value, startLogin])
   }>
     {children}
   </GlobalContext.Provider>

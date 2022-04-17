@@ -8,15 +8,9 @@ import Button from '@mui/material/Button'
 
 const LIMIT = 7
 export default function CommentList({
-  clusterId,
-  beforeInteract,
-  onDataLoadSuccess,
-  toggleIdentity
+  clusterId
 }: {
   clusterId: string,
-  beforeInteract: <T>(hadLoginCallback: T) => T,
-  onDataLoadSuccess?: () => void
-  toggleIdentity?: () => void
 }) {
   const offsetRef = useRef(0)
   const [hasMore, setHasMore] = useState(true)
@@ -88,8 +82,7 @@ export default function CommentList({
       console.error({err});
       setCommentInfos( [] )
     }
-    onDataLoadSuccess?.()
-  }, [fetchComments, markTopCommentTopCommentInfos, onDataLoadSuccess])
+  }, [fetchComments, markTopCommentTopCommentInfos])
 
   useEffect(() => {
     fetch(0)
@@ -114,9 +107,6 @@ export default function CommentList({
           commentInfo={info}
           articleId={clusterId}
           topCommentId={info?.topCommentId}
-          beforeInteract={beforeInteract}
-          onSendReply={onDataLoadSuccess}
-          toggleIdentity={toggleIdentity}
         />
       </div>
       )

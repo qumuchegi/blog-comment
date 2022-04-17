@@ -1,6 +1,7 @@
 .body {
   /* padding: 10px; */
   padding-bottom: 10px;
+  border-top: solid 1px #eee;
   /* border-radius: -7px; */
 }
 /* .body:hover {

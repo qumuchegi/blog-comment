@@ -7,53 +7,13 @@ import StoreProvider, { useStoreAction } from '../components/store'
 import { entriesToObj } from '../lib/utils/object'
 import { BroadcastChannel } from 'broadcast-channel'
 
-const ANONYMOUS_ACCOUNT = {
-  userId: '',
-  authPlatform: AuthPlatform.anonymous,
-  userName: '匿名',
-  avatar: '/anonymous_avatar.png'
-}
 const Home = ({
-  articleId,
-  auth = [AuthPlatform.anonymous],
-  githubAuthClientId,
-  parentHref
+  articleId
 }: {
-  articleId: string,
-  auth: AuthPlatform[], // ['github', 'anonymous']
-  githubAuthClientId?: string,
-  parentHref: string
+  articleId: string
 }) => {
-  const [openLoginDialog, setOpenLoginDialog] = useState(true)
-  const [loginIdentity, setLoginIdentity] = useState<LoginIdentity>()
   const setGithubAuthInfo = useStoreAction(actions => actions.setGithubAuthInfo)
   const clusterId = articleId || '4edd40c86762e0fb12000003'
-  const onLoginSuccess = useCallback((authType) => {
-    if (authType === AuthPlatform.anonymous) {
-      setLoginIdentity(ANONYMOUS_ACCOUNT)
-      setGithubAuthInfo(undefined)
-    } else {
-      // setLoginIdentity({
-      //   userId: '',
-      //   authPlatform: AuthPlatform.anonymous,
-      //   userName: '匿名',
-      //   avatar: '/anonymous_avatar.png'
-      // })
-    }
-  } ,[setGithubAuthInfo])
-  const onLoginFailed = useCallback(() => {
-    setLoginIdentity(ANONYMOUS_ACCOUNT)
-  } ,[])
-
-  const ensureLogin = useCallback((loginedCallback: any) => {
-      // sendHeight()
-      if (!loginIdentity) {
-        return () => {
-          setOpenLoginDialog(true)
-        }
-      }
-      return loginedCallback
-  }, [loginIdentity])
 
   useEffect(() => {
     const INIT_IFRAME_MSG = 'iframe_init_msg'
@@ -61,12 +21,12 @@ const Home = ({
       JSON.stringify({
         msg: INIT_IFRAME_MSG,
         data: {
-          githubAuthClientId: githubAuthClientId
+          // githubAuthClientId: githubAuthClientId
         }
       }),
       "*"
     )
-  }, [githubAuthClientId])
+  }, [])
 
   useEffect(() => {
     // BroadcastChannel 借助 local Storage 存储的登陆信息
@@ -95,7 +55,6 @@ const Home = ({
         // auth_token,
         github_userid
       } = githubAuth
-      setOpenLoginDialog(false)
       const _loginIdentity = {
         userId: github_userid,
         authPlatform: AuthPlatform.github,
@@ -104,7 +63,6 @@ const Home = ({
         url: userHomeUrl,
         // token: auth_token
       }
-      setLoginIdentity(_loginIdentity)
       setGithubAuthInfo(
         {
           userId: github_userid,
@@ -129,10 +87,6 @@ const Home = ({
       }),
       "*"
     )
-  }, [])
-
-  const showLoginDialog = useCallback(() => {
-    setOpenLoginDialog(true)
   }, [])
 
   useEffect(() => {
@@ -167,17 +121,6 @@ const Home = ({
       style={{
         flex: 1
       }}>
-        <LoginDialog
-          openLoginDialog={openLoginDialog}
-          onRequestCLose={useCallback(() => {
-            setOpenLoginDialog(false)
-          }, [])}
-          onLoginSuccess={onLoginSuccess}
-          onLoginFailed={onLoginFailed}
-          auth={auth}
-          githubAuthClientId={githubAuthClientId}
-          parentHref={parentHref}
-        />
       <div style={{
         backgroundColor: '#fff',
         padding: '10px 10px 0 10px',
@@ -185,9 +128,6 @@ const Home = ({
       }}>
         <CommentSendInput
           articleId={clusterId}
-          beforeInteract={ensureLogin}
-          toggleIdentity={showLoginDialog}
-          // onSuccess={sendHeight}
         /> 
       </div>
       <div style={{
@@ -195,9 +135,6 @@ const Home = ({
       }}>
         <CommentList
           clusterId={clusterId}
-          beforeInteract={ensureLogin}
-          // onDataLoadSuccess={sendHeight}
-          toggleIdentity={showLoginDialog}
         />
       </div>
     </div>
@@ -207,7 +144,7 @@ const Home = ({
 const ConnectStore = (
   {
     articleId,
-    auth,
+    auth = [AuthPlatform.anonymous, AuthPlatform.github],
     githubAuthClientId,
     parentHref
   }: {
@@ -217,14 +154,18 @@ const ConnectStore = (
     parentHref: string
   }
 ) => {
-  return <StoreProvider>
-    <Home articleId={articleId} auth={auth} githubAuthClientId={githubAuthClientId} parentHref={parentHref}/>
+  return <StoreProvider
+    authConfig={auth}
+    githubAuthClientId={githubAuthClientId}
+    parentHref={parentHref}
+  >
+    <Home articleId={articleId}/>
   </StoreProvider>
 }
 export default ConnectStore
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { articleId = '', auth = [], parentHref  = '' } = context.query || {}
+  const { articleId = '', auth = [AuthPlatform.github], parentHref  = '' } = context.query || {}
 
   return {
     props: {
