@@ -3,7 +3,7 @@ import CommentList from '../components/CommentList'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { GetServerSideProps } from 'next'
 import LoginDialog, { LoginIdentity, AuthPlatform } from '../components/LoginDialog'
-import StoreProvider, { useStoreAction } from '../components/store'
+import StoreProvider, { useStoreAction } from '../lib/store'
 import { entriesToObj } from '../lib/utils/object'
 import { BroadcastChannel } from 'broadcast-channel'
 

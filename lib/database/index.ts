@@ -41,6 +41,7 @@ async function dbConnect() {
 async function initDb() {
   await dbConnect()
   console.log('数据库连接成功')
+  return true
 }
 
 const createModel = <T>(modelName: SchemaNames, schema: mongoose.Schema) => {

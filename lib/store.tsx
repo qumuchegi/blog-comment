@@ -1,7 +1,7 @@
 import React, { createContext, useCallback, useContext, useMemo, useState } from 'react'
-import openGithubAuth from '../lib/login/github'
+import openGithubAuth from './login/github'
 import { GithubAuth } from '../types/context'
-import { AuthPlatform } from './LoginDialog'
+import { AuthPlatform } from '../components/LoginDialog'
 
 type ContextValue = {
   state: {

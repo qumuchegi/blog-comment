@@ -8,7 +8,7 @@ import CommentItem from './CommentItem'
 import { ResData as CommentInfoRes } from '../lib/network/getCommentInfoById'
 import RichTextInput from './RichTextInput'
 import Avatar from './AvatarWithBadge'
-import { useStoreAction, useStoreState } from './store'
+import { useStoreAction, useStoreState } from '../lib/store'
 import LoginDialog, { AuthPlatform } from './LoginDialog'
 import Tooltip, { TooltipProps, tooltipClasses } from '@mui/material/Tooltip'
 

@@ -2,8 +2,9 @@ import React, { useState, useCallback, useMemo } from 'react'
 import Image from 'next/image' 
 import styles from './styles/LoginDialog.module.css'
 import openGithubAuth from '../lib/login/github'
-import { useStoreAction, useStoreState } from './store'
+import { useStoreAction, useStoreState } from '../lib/store'
 import LoadingMask from './LoaingMask'
+import { MenuItem, Select } from '@mui/material'
 
 export enum AuthPlatform {
   anonymous = 'anonymous', // 匿名
@@ -52,9 +53,9 @@ export default function LoginDialog(
   ] = useStoreAction(actions => [
     actions.startLogin
   ])
+  const [ currentLoginIdentity ] = useStoreState(state => [state.currentLoginIdentity])
   const login = useCallback(async (selectedPlatform) => {
     setIsLoginLoading(true)
-
     startLogin(
       selectedPlatform,
       () => {
@@ -88,19 +89,29 @@ export default function LoginDialog(
       }}>
       {
         isShowSelect &&
-        _IDENTITIES.map(({
-          platform,
-          label,
-          imgUrl
-        }) => <div key={platform}>
-            <div
-              className={styles.platformItem}
-              onClick={() => onSelectPlatform(platform)}
-            >
-              <Image src={imgUrl} alt={label} width={20} height={20}/>
-              <span>{label}</span>
-            </div>
-        </div>)
+        <Select
+          value={currentLoginIdentity}
+          onChange={(e) => onSelectPlatform(e.target.value)}
+          variant='standard'
+          autoFocus
+          autoWidth
+        >
+          {
+             _IDENTITIES.map(({
+              platform,
+              label,
+              imgUrl
+            }) => <MenuItem key={platform} value={platform}>
+                <div
+                  className={styles.platformItem}
+                >
+                  <Image src={imgUrl} alt={label} width={20} height={20}/>
+                  <span>{label}</span>
+                </div>
+            </MenuItem>)
+          }
+        </Select>
+       
       }
       </div>
     </div>
