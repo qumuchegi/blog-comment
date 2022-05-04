@@ -25,12 +25,12 @@ export const getCachedGithubAuthInfo = () => {
   return github_auth_info
 }
 
-const PARENT_GITHUB_AUTH_MSG_START = 'PARENT_GITHUB_AUTH_MSG_START'
 export default function openGithubAuth(githubAuthClientId: string, parentHref: string) {
   const url = `https://github.com/login/oauth/authorize?client_id=${githubAuthClientId}`
     + (
       `&redirect_uri=${`${window.location.origin}/api/githubLoginCallback?redirect_url=`
-      + encodeURIComponent(window.location.origin + '/blankPageForAuth')}`
+      + encodeURIComponent(parentHref)}`
     )
-  const newWin = window.open(url)
+  window.open(url)
+  window.parent.close()
 }

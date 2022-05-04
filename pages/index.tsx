@@ -5,7 +5,7 @@ import { GetServerSideProps } from 'next'
 import LoginDialog, { LoginIdentity, AuthPlatform } from '../components/LoginDialog'
 import StoreProvider, { useStoreAction } from '../lib/store'
 import { entriesToObj } from '../lib/utils/object'
-import { BroadcastChannel } from 'broadcast-channel'
+import { MESSAGE } from '../lib/const'
 
 const Home = ({
   articleId
@@ -16,10 +16,9 @@ const Home = ({
   const clusterId = articleId || '4edd40c86762e0fb12000003'
 
   useEffect(() => {
-    const INIT_IFRAME_MSG = 'iframe_init_msg'
     window.parent?.postMessage(
       JSON.stringify({
-        msg: INIT_IFRAME_MSG,
+        msg: MESSAGE.INIT_IFRAME_MSG,
         data: {
           // githubAuthClientId: githubAuthClientId
         }
@@ -29,16 +28,16 @@ const Home = ({
   }, [])
 
   useEffect(() => {
-    // BroadcastChannel 借助 local Storage 存储的登陆信息
-    const localStorageValue = localStorage.getItem('pubkey.broadcastChannel-github-auth-message')
-
+    console.log({
+      cookie: document.cookie
+    })
     let githubAuthCookieValue = ''
     try {
-      githubAuthCookieValue = JSON.parse(localStorageValue || '{}').data.data
+      githubAuthCookieValue = document.cookie
     } catch (err) {
       githubAuthCookieValue = ''
     }
-    console.log('githubAuthCookieValue', githubAuthCookieValue)
+    // console.log('githubAuthCookieValue', githubAuthCookieValue)
     const githubAuth = entriesToObj<{
       userHomeUrl: string,
       auth_username: string,
@@ -55,14 +54,7 @@ const Home = ({
         // auth_token,
         github_userid
       } = githubAuth
-      const _loginIdentity = {
-        userId: github_userid,
-        authPlatform: AuthPlatform.github,
-        userName: auth_username,
-        avatar: auth_avatar,
-        url: userHomeUrl,
-        // token: auth_token
-      }
+
       setGithubAuthInfo(
         {
           userId: github_userid,
@@ -80,24 +72,13 @@ const Home = ({
   const sendHeight = useCallback(() => {
     window.parent?.postMessage(
       JSON.stringify({
-        msg: 'send_iframe_height',
+        msg: MESSAGE.SEND_IFRAME_HEIGHT,
         data: {
           height: document.getElementById('commentBodyId')?.scrollHeight
         }
       }),
       "*"
     )
-  }, [])
-
-  useEffect(() => {
-    // 建立和 newWin 的通信频道
-    const channel = new BroadcastChannel('github-auth-message', {
-      type: 'localstorage',
-      webWorkerSupport: true
-    })
-    channel.addEventListener('message', evt => {
-      window.location.reload()
-    })
   }, [])
 
   useEffect(() => {
